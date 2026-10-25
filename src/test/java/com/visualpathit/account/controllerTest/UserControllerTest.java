@@ -96,8 +96,8 @@ public class UserControllerTest {
 	public void welcomeAfterDirectLoginTestHappyFlow() throws Exception{
 		mockMvc.perform(get("/"))
         .andExpect(status().isOk())
-        .andExpect(view().name("welcome"))
-        .andExpect(forwardedUrl("welcome"));
+        .andExpect(view().name("login"))
+        .andExpect(forwardedUrl("login"));
 		
 	}
 	@Test

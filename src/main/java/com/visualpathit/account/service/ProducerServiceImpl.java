@@ -4,14 +4,19 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.visualpathit.account.utils.RabbitMqUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.rabbitmq.client.Channel;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
 @Service
 public class ProducerServiceImpl implements ProducerService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProducerServiceImpl.class);
 
     /**
      *  The name of the Exchange
@@ -24,6 +29,8 @@ public class ProducerServiceImpl implements ProducerService {
      */
     @Override
     public String produceMessage(String message) {
+        Objects.requireNonNull(message, "message");
+
         try {
             ConnectionFactory factory = new ConnectionFactory();
             /**
@@ -36,20 +43,15 @@ public class ProducerServiceImpl implements ProducerService {
             factory.setPort(Integer.parseInt(RabbitMqUtil.getRabbitMqPort()));
             factory.setUsername(RabbitMqUtil.getRabbitMqUser());
             factory.setPassword(RabbitMqUtil.getRabbitMqPassword());
-            Connection connection = factory.newConnection();
-            System.out.println("Connection open status"+connection.isOpen());
-            Channel channel = connection.createChannel();
-            channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
-            channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes());
-            System.out.println(" [x] Sent '" + message + "'");
-            channel.close();
-            connection.close();
+            try (Connection connection = factory.newConnection();
+                 Channel channel = connection.createChannel()) {
+                channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+                channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
+            }
         } catch (IOException io) {
-            System.out.println("IOException");
-            io.printStackTrace();
+            LOGGER.error("Unable to publish RabbitMQ message", io);
         } catch (TimeoutException toe) {
-            System.out.println("TimeoutException : " + toe.getMessage());
-            toe.printStackTrace();
+            LOGGER.error("Timed out while publishing RabbitMQ message", toe);
         }
         return "response";
     }

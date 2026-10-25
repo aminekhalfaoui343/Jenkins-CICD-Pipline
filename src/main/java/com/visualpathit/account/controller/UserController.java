@@ -1,52 +1,52 @@
 package com.visualpathit.account.controller;
 
 import com.visualpathit.account.model.User;
-import com.visualpathit.account.service.ProducerService;
+import com.visualpathit.account.dto.UserFormDto;
+import com.visualpathit.account.dto.UserViewDto;
 import com.visualpathit.account.service.SecurityService;
 import com.visualpathit.account.service.UserService;
 import com.visualpathit.account.utils.MemcachedUtils;
 import com.visualpathit.account.validator.UserValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final SecurityService securityService;
+    private final UserValidator userValidator;
 
-    @Autowired
-    private SecurityService securityService;
-
-    @Autowired
-    private UserValidator userValidator;
-
-    @Autowired
-    private ProducerService producerService;
+    public UserController(UserService userService, SecurityService securityService, UserValidator userValidator) {
+        this.userService = userService;
+        this.securityService = securityService;
+        this.userValidator = userValidator;
+    }
 
     @GetMapping("/registration")
     public String registration(Model model) {
-        model.addAttribute("userForm", new User());
+        model.addAttribute("userForm", new UserFormDto());
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String registration(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    public String registration(@ModelAttribute("userForm") @Valid UserFormDto userForm,
+                               BindingResult bindingResult, Model model) {
         userValidator.validate(userForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "registration";
         }
 
-        userService.save(userForm);
-        boolean loginSuccessful = securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm());
+        User user = userForm.toNewUser();
+        userService.save(user);
+        boolean loginSuccessful = securityService.autologin(user.getUsername(), userForm.getPasswordConfirm());
         if (!loginSuccessful) {
             return "redirect:/login?error";
         }
@@ -54,7 +54,7 @@ public class UserController {
         return "redirect:/welcome";
     }
 
-    @GetMapping("/")
+    @GetMapping({"/", "/login"})
     public String login(Model model, @RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "logout", required = false) String logout) {
         if (error != null) {
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@ModelAttribute("user") User user, Model model) {
+    public String loginPost(@ModelAttribute("user") UserFormDto user, Model model) {
         boolean loginSuccessful = securityService.autologin(user.getUsername(), user.getPassword());
         if (!loginSuccessful) {
             model.addAttribute("error", "Your username and password is invalid.");
@@ -77,18 +77,20 @@ public class UserController {
     }
 
     @GetMapping("/welcome")
-    public String welcome(Model model) {
+    public String welcome() {
         return "welcome";
     }
 
     @GetMapping("/index")
-    public String indexHome(Model model) {
+    public String indexHome() {
         return "index_home";
     }
 
     @GetMapping("/users")
     public String getAllUsers(Model model) {
-        List<User> users = userService.getList();
+        List<UserViewDto> users = userService.getList().stream()
+                .map(UserViewDto::fromUser)
+                .collect(Collectors.toList());
         model.addAttribute("users", users);
         return "userList";
     }
@@ -100,18 +102,23 @@ public class UserController {
             User userData = MemcachedUtils.memcachedGetData(id);
             if (userData != null) {
                 result = "Data is From Cache";
-                model.addAttribute("user", userData);
+                model.addAttribute("user", UserViewDto.fromUser(userData));
             } else {
                 User user = userService.findById(Long.parseLong(id));
+                if (user == null) {
+                    model.addAttribute("error", "User not found");
+                    return "error/404";
+                }
                 result = MemcachedUtils.memcachedSetData(user, id);
                 if (result == null) {
                     result = "Memcached Connection Failure !!";
                 }
-                model.addAttribute("user", user);
+                model.addAttribute("user", UserViewDto.fromUser(user));
             }
             model.addAttribute("Result", result);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            model.addAttribute("error", "Unable to load user");
+            return "error/404";
         }
         return "user";
     }
@@ -119,14 +126,22 @@ public class UserController {
     @GetMapping("/user/{username}")
     public String userUpdate(@PathVariable("username") String username, Model model) {
         User user = userService.findByUsername(username);
-        model.addAttribute("user", user);
+        if (user == null) {
+            model.addAttribute("error", "User not found");
+            return "error/404";
+        }
+        model.addAttribute("user", UserFormDto.fromUser(user));
         return "userUpdate";
     }
 
     @PostMapping("/user/{username}")
-    public String userUpdateProfile(@PathVariable("username") String username, @ModelAttribute("user") User userForm) {
+    public String userUpdateProfile(@PathVariable("username") String username,
+                                    @ModelAttribute("user") UserFormDto userForm) {
         User user = userService.findByUsername(username);
-        updateUserDetails(user, userForm);
+        if (user == null) {
+            return "error/404";
+        }
+        userForm.copyProfileTo(user);
         userService.save(user);
         return "welcome";
     }
@@ -138,28 +153,4 @@ public class UserController {
 //        }
 //        return "rabbitmq";
 //    }
-
-    private void updateUserDetails(User user, User userForm) {
-        user.setUsername(userForm.getUsername());
-        user.setUserEmail(userForm.getUserEmail());
-        user.setDateOfBirth(userForm.getDateOfBirth());
-        user.setFatherName(userForm.getFatherName());
-        user.setMotherName(userForm.getMotherName());
-        user.setGender(userForm.getGender());
-        user.setLanguage(userForm.getLanguage());
-        user.setMaritalStatus(userForm.getMaritalStatus());
-        user.setNationality(userForm.getNationality());
-        user.setPermanentAddress(userForm.getPermanentAddress());
-        user.setTempAddress(userForm.getTempAddress());
-        user.setPhoneNumber(userForm.getPhoneNumber());
-        user.setSecondaryPhoneNumber(userForm.getSecondaryPhoneNumber());
-        user.setPrimaryOccupation(userForm.getPrimaryOccupation());
-        user.setSecondaryOccupation(userForm.getSecondaryOccupation());
-        user.setSkills(userForm.getSkills());
-        user.setWorkingExperience(userForm.getWorkingExperience());
-    }
-
-    private static String generateString() {
-        return "uuid = " + UUID.randomUUID().toString();
-    }
 }

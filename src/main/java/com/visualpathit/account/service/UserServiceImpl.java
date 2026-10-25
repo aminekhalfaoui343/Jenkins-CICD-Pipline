@@ -10,23 +10,29 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
-/** {@author imrant}!*/
+/** User persistence and password encoding operations. */
 @Service
 public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    /** userRepository !*/
-    private UserRepository userRepository;
-    @Autowired
-    /** roleRepository !*/
-    private RoleRepository roleRepository;
-    @Autowired
-    /** bCryptPasswordEncoder !*/
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = Objects.requireNonNull(userRepository);
+        this.roleRepository = Objects.requireNonNull(roleRepository);
+        this.bCryptPasswordEncoder = Objects.requireNonNull(bCryptPasswordEncoder);
+    }
 
     @Override
     public void save(final User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
         user.setRoles(new HashSet<>(roleRepository.findAll()));
         userRepository.save(user);
     }
@@ -41,7 +47,7 @@ public class UserServiceImpl implements UserService {
     	return userRepository.findAll();
     }
     @Override
-	public User findById(long id){
-    	return userRepository.findById(id);
+    public User findById(long id) {
+        return userRepository.findById(id).orElse(null);
     }
 }
