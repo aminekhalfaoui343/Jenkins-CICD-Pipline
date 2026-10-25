@@ -11,20 +11,39 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SecurityServiceImpl implements SecurityService {
+public final class SecurityServiceImpl implements SecurityService {
+    /** Performs Spring Security authentication. */
     private final AuthenticationManager authenticationManager;
+
+    /** Loads user details for the submitted username. */
     private final UserDetailsService userDetailsService;
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
+    /** Logger for automatic login outcomes. */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(SecurityServiceImpl.class);
 
-    public SecurityServiceImpl(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
+    /**
+     * Creates the security service.
+     *
+     * @param authenticationManagerDependency authentication manager
+     * @param userDetailsServiceDependency user details service
+     */
+    public SecurityServiceImpl(
+            final AuthenticationManager authenticationManagerDependency,
+            final UserDetailsService userDetailsServiceDependency) {
+        this.authenticationManager = authenticationManagerDependency;
+        this.userDetailsService = userDetailsServiceDependency;
     }
 
+    /**
+     * Finds the username associated with the current authentication details.
+     *
+     * @return logged-in username, or {@code null} when no user details exist
+     */
     @Override
     public String findLoggedInUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return null;
         }
@@ -35,20 +54,30 @@ public class SecurityServiceImpl implements SecurityService {
         return null;
     }
 
+    /**
+     * Authenticates the supplied credentials and stores the resulting context.
+     *
+     * @param username account username
+     * @param password raw account password
+     * @return {@code true} when authentication succeeds
+     */
     @Override
     public boolean autologin(final String username, final String password) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails, password, userDetails.getAuthorities());
 
-        authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        authenticationManager.authenticate(authenticationToken);
 
-        if (usernamePasswordAuthenticationToken.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            logger.debug("Auto login {} successfully!", username);
+        if (authenticationToken.isAuthenticated()) {
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authenticationToken);
+            LOGGER.debug("Auto login {} successfully!", username);
             return true;
         }
-        logger.debug("Auto login {} failed!", username);
+        LOGGER.debug("Auto login {} failed!", username);
         return false;
     }
 }

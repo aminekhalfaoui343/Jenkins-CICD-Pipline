@@ -9,15 +9,28 @@ import org.springframework.stereotype.Service;
 import com.visualpathit.account.beans.Components;
 
 @Service
-public class ElasticsearchUtil {
+public final class ElasticsearchUtil {
 
+    /** Injected configuration used to create Elasticsearch clients. */
     private static Components object;
 
+    /**
+     * Sets the injected Elasticsearch configuration.
+     *
+     * @param configuration application configuration bean
+     */
     @Autowired
-    public void setComponents(Components object) {
-        ElasticsearchUtil.object = object;
+    public void setComponents(final Components configuration) {
+        ElasticsearchUtil.object = configuration;
     }
 
+    /**
+     * Creates an Elasticsearch high-level REST client from application
+     * settings.
+     *
+     * @return configured Elasticsearch client, or {@code null} if
+     *         initialization fails
+     */
     public static RestHighLevelClient getRestHighLevelClient() {
         System.out.println("Creating Elasticsearch client...");
         String elasticsearchHost = object.getElasticsearchHost();
@@ -29,10 +42,10 @@ public class ElasticsearchUtil {
         RestHighLevelClient client = null;
         try {
             client = new RestHighLevelClient(
-                RestClient.builder(
-                    new HttpHost(elasticsearchHost, Integer.parseInt(elasticsearchPort), "http")
-                )
-            );
+                    RestClient.builder(new HttpHost(
+                            elasticsearchHost,
+                            Integer.parseInt(elasticsearchPort),
+                            "http")));
         } catch (Exception e) {
             e.printStackTrace();
         }

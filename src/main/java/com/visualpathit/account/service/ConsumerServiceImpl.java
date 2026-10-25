@@ -8,21 +8,20 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConsumerServiceImpl implements ConsumerService {
-
-    /**
-        The name of the exchange.
-     */
+public final class ConsumerServiceImpl implements ConsumerService {
+    /** Name of the message exchange. */
     private static final String EXCHANGE_NAME = "messages";
 
     /**
-     *  The function that consumes messages from the broker(RabbitMQ)
-     * @param data
+     * Receives and displays a message from the RabbitMQ fanout exchange.
+     *
+     * @param data message body
      */
     @Override
-    @RabbitListener(bindings = @QueueBinding( value = @Queue(),
-            exchange = @Exchange(value = EXCHANGE_NAME, type = ExchangeTypes.FANOUT)))
-    public void consumerMessage(byte[] data) {
+    @RabbitListener(bindings = @QueueBinding(value = @Queue(),
+            exchange = @Exchange(
+                    value = EXCHANGE_NAME, type = ExchangeTypes.FANOUT)))
+    public void consumerMessage(final byte[] data) {
         String consumedMessage = new String(data);
         System.out.println(" [x] Consumed  '" + consumedMessage + "'");
     }

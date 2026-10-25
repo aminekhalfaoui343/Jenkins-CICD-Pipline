@@ -3,109 +3,214 @@ package com.visualpathit.account.beans;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Holds external service configuration injected from application properties.
+ */
 @Component
-public class Components {
-	
-	@Value("${memcached.active.host}")
+public final class Components {
+    /** Active Memcached server host. */
+    @Value("${memcached.active.host}")
     private String activeHost;
-	@Value("${memcached.active.port}")
+    /** Active Memcached server port. */
+    @Value("${memcached.active.port}")
     private String activePort;
-	@Value("${memcached.standBy.host}")
+    /** Standby Memcached server host. */
+    @Value("${memcached.standBy.host}")
     private String standByHost;
-	@Value("${memcached.standBy.port}")
+    /** Standby Memcached server port. */
+    @Value("${memcached.standBy.port}")
     private String standByPort;
-	
-	@Value("${rabbitmq.address}")
+    /** RabbitMQ broker host. */
+    @Value("${rabbitmq.address}")
     private String rabbitMqHost;
-	@Value("${rabbitmq.port}")
+    /** RabbitMQ broker port. */
+    @Value("${rabbitmq.port}")
     private String rabbitMqPort;
-	@Value("${rabbitmq.username}")
+    /** RabbitMQ username. */
+    @Value("${rabbitmq.username}")
     private String rabbitMqUser;
-	@Value("${rabbitmq.password}")
+    /** RabbitMQ password. */
+    @Value("${rabbitmq.password}")
     private String rabbitMqPassword;
-	
-	@Value("${elasticsearch.host}")
+    /** Elasticsearch host. */
+    @Value("${elasticsearch.host}")
     private String elasticsearchHost;
-	@Value("${elasticsearch.port}")
+    /** Elasticsearch port. */
+    @Value("${elasticsearch.port}")
     private String elasticsearchPort;
-	@Value("${elasticsearch.cluster}")
+    /** Elasticsearch cluster name. */
+    @Value("${elasticsearch.cluster}")
     private String elasticsearchCluster;
-	@Value("${elasticsearch.node}")
+    /** Elasticsearch node name. */
+    @Value("${elasticsearch.node}")
     private String elasticsearchNode;
-	
-	
-	public String getActiveHost() {
-		return activeHost;
-	}
-	public String getActivePort() {
-		return activePort;
-	}
-	public String getStandByHost() {
-		return standByHost;
-	}
-	public String getStandByPort() {
-		return standByPort;
-	}
-	public void setActiveHost(String activeHost) {
-		this.activeHost = activeHost;
-	}
-	public void setActivePort(String activePort) {
-		this.activePort = activePort;
-	}
-	public void setStandByHost(String standByHost) {
-		this.standByHost = standByHost;
-	}
-	public void setStandByPort(String standByPort) {
-		this.standByPort = standByPort;
-	}
-	public String getRabbitMqHost() {
-		return rabbitMqHost;
-	}
-	public void setRabbitMqHost(String rabbitMqHost) {
-		this.rabbitMqHost = rabbitMqHost;
-	}
-	public String getRabbitMqPort() {
-		return rabbitMqPort;
-	}
-	public void setRabbitMqPort(String rabbitMqPort) {
-		this.rabbitMqPort = rabbitMqPort;
-	}
-	public String getRabbitMqUser() {
-		return rabbitMqUser;
-	}
-	public void setRabbitMqUser(String rabbitMqUser) {
-		this.rabbitMqUser = rabbitMqUser;
-	}
-	public String getRabbitMqPassword() {
-		return rabbitMqPassword;
-	}
-	public void setRabbitMqPassword(String rabbitMqPassword) {
-		this.rabbitMqPassword = rabbitMqPassword;
-	}
-	public String getElasticsearchHost() {
-		return elasticsearchHost;
-	}
-	public void setElasticsearchHost(String elasticsearchHost) {
-		this.elasticsearchHost = elasticsearchHost;
-	}
-	public String getElasticsearchPort() {
-		return elasticsearchPort;
-	}
-	public void setElasticsearchPort(String elasticsearchPort) {
-		this.elasticsearchPort = elasticsearchPort;
-	}
-	public String getElasticsearchCluster() {
-		return elasticsearchCluster;
-	}
-	public void setElasticsearchCluster(String elasticsearchCluster) {
-		this.elasticsearchCluster = elasticsearchCluster;
-	}
-	public String getElasticsearchNode() {
-		return elasticsearchNode;
-	}
-	public void setElasticsearchNode(String elasticsearchNode) {
-		this.elasticsearchNode = elasticsearchNode;
-	}
-	
-	
+
+    /** @return active Memcached host */
+    public String getActiveHost() {
+        return activeHost;
+    }
+
+    /**
+     * Sets the active Memcached host.
+     *
+     * @param newActiveHost configured host
+     */
+    public void setActiveHost(final String newActiveHost) {
+        this.activeHost = newActiveHost;
+    }
+
+    /** @return active Memcached port */
+    public String getActivePort() {
+        return activePort;
+    }
+
+    /**
+     * Sets the active Memcached port.
+     *
+     * @param newActivePort configured port
+     */
+    public void setActivePort(final String newActivePort) {
+        this.activePort = newActivePort;
+    }
+
+    /** @return standby Memcached host */
+    public String getStandByHost() {
+        return standByHost;
+    }
+
+    /**
+     * Sets the standby Memcached host.
+     *
+     * @param newStandByHost configured host
+     */
+    public void setStandByHost(final String newStandByHost) {
+        this.standByHost = newStandByHost;
+    }
+
+    /** @return standby Memcached port */
+    public String getStandByPort() {
+        return standByPort;
+    }
+
+    /**
+     * Sets the standby Memcached port.
+     *
+     * @param newStandByPort configured port
+     */
+    public void setStandByPort(final String newStandByPort) {
+        this.standByPort = newStandByPort;
+    }
+
+    /** @return RabbitMQ host */
+    public String getRabbitMqHost() {
+        return rabbitMqHost;
+    }
+
+    /**
+     * Sets the RabbitMQ host.
+     *
+     * @param newRabbitMqHost configured host
+     */
+    public void setRabbitMqHost(final String newRabbitMqHost) {
+        this.rabbitMqHost = newRabbitMqHost;
+    }
+
+    /** @return RabbitMQ port */
+    public String getRabbitMqPort() {
+        return rabbitMqPort;
+    }
+
+    /**
+     * Sets the RabbitMQ port.
+     *
+     * @param newRabbitMqPort configured port
+     */
+    public void setRabbitMqPort(final String newRabbitMqPort) {
+        this.rabbitMqPort = newRabbitMqPort;
+    }
+
+    /** @return RabbitMQ username */
+    public String getRabbitMqUser() {
+        return rabbitMqUser;
+    }
+
+    /**
+     * Sets the RabbitMQ username.
+     *
+     * @param newRabbitMqUser configured username
+     */
+    public void setRabbitMqUser(final String newRabbitMqUser) {
+        this.rabbitMqUser = newRabbitMqUser;
+    }
+
+    /** @return RabbitMQ password */
+    public String getRabbitMqPassword() {
+        return rabbitMqPassword;
+    }
+
+    /**
+     * Sets the RabbitMQ password.
+     *
+     * @param newRabbitMqPassword configured password
+     */
+    public void setRabbitMqPassword(final String newRabbitMqPassword) {
+        this.rabbitMqPassword = newRabbitMqPassword;
+    }
+
+    /** @return Elasticsearch host */
+    public String getElasticsearchHost() {
+        return elasticsearchHost;
+    }
+
+    /**
+     * Sets the Elasticsearch host.
+     *
+     * @param newElasticsearchHost configured host
+     */
+    public void setElasticsearchHost(final String newElasticsearchHost) {
+        this.elasticsearchHost = newElasticsearchHost;
+    }
+
+    /** @return Elasticsearch port */
+    public String getElasticsearchPort() {
+        return elasticsearchPort;
+    }
+
+    /**
+     * Sets the Elasticsearch port.
+     *
+     * @param newElasticsearchPort configured port
+     */
+    public void setElasticsearchPort(final String newElasticsearchPort) {
+        this.elasticsearchPort = newElasticsearchPort;
+    }
+
+    /** @return Elasticsearch cluster name */
+    public String getElasticsearchCluster() {
+        return elasticsearchCluster;
+    }
+
+    /**
+     * Sets the Elasticsearch cluster name.
+     *
+     * @param newElasticsearchCluster configured cluster name
+     */
+    public void setElasticsearchCluster(
+            final String newElasticsearchCluster) {
+        this.elasticsearchCluster = newElasticsearchCluster;
+    }
+
+    /** @return Elasticsearch node name */
+    public String getElasticsearchNode() {
+        return elasticsearchNode;
+    }
+
+    /**
+     * Sets the Elasticsearch node name.
+     *
+     * @param newElasticsearchNode configured node name
+     */
+    public void setElasticsearchNode(final String newElasticsearchNode) {
+        this.elasticsearchNode = newElasticsearchNode;
+    }
 }

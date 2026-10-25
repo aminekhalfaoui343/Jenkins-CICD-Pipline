@@ -12,8 +12,13 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @Controller
-public class RabbitMqController {
+public final class RabbitMqController {
 
+    /**
+     * Checks whether a RabbitMQ connection can be opened.
+     *
+     * @return model and view for the RabbitMQ connection status
+     */
     @GetMapping("/user/rabbit")
     public ModelAndView checkRabbitMqStatus() {
         ModelAndView modelAndView = new ModelAndView();
@@ -30,7 +35,8 @@ public class RabbitMqController {
                     modelAndView.setViewName("rabbitmq-error");
                 }
             }
-        } catch (IOException | TimeoutException | NumberFormatException e) {
+        } catch (IOException | TimeoutException
+                | NumberFormatException exception) {
             modelAndView.setViewName("rabbitmq-error");
         }
         return modelAndView;

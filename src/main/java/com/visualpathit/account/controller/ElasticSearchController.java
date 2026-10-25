@@ -27,22 +27,44 @@ import com.visualpathit.account.service.UserService;
 import com.visualpathit.account.utils.ElasticsearchUtil;
 
 @Controller
-public class ElasticSearchController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchController.class);
+public final class ElasticSearchController {
+    /** Elasticsearch index containing user documents. */
+    private static final String USERS_INDEX = "users";
+    /** View used to display Elasticsearch operation results. */
+    private static final String RESULT_VIEW = "elasticeSearchRes";
 
+    /** Logger for Elasticsearch operation outcomes. */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ElasticSearchController.class);
+
+    /** User persistence service used to load indexed records. */
     private final UserService userService;
 
-    public ElasticSearchController(UserService userService) {
-        this.userService = userService;
+    /**
+     * Creates the Elasticsearch controller.
+     *
+     * @param service user persistence service
+     */
+    public ElasticSearchController(final UserService service) {
+        this.userService = service;
     }
 
+    /**
+     * Indexes all users in Elasticsearch.
+     *
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
     @GetMapping("/user/elasticsearch")
     public String insert(final Model model) throws IOException {
         List<User> users = userService.getList();
 
-        try (RestHighLevelClient client = ElasticsearchUtil.getRestHighLevelClient()) {
+        try (RestHighLevelClient client =
+                     ElasticsearchUtil.getRestHighLevelClient()) {
             for (User user : users) {
-                IndexRequest indexRequest = new IndexRequest("users").id(String.valueOf(user.getId()))
+                IndexRequest indexRequest = new IndexRequest(USERS_INDEX)
+                        .id(String.valueOf(user.getId()))
                         .source(XContentFactory.jsonBuilder()
                                 .startObject()
                                 .field("name", user.getUsername())
@@ -54,56 +76,96 @@ public class ElasticSearchController {
                                 .field("phoneNumber", user.getPhoneNumber())
                                 .endObject());
 
-                IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-                LOGGER.info("Indexed user {} with result {}", user.getId(), response.getResult());
+                IndexResponse response = client.index(
+                        indexRequest, RequestOptions.DEFAULT);
+                LOGGER.info("Indexed user {} with result {}",
+                        user.getId(), response.getResult());
             }
         }
 
         model.addAttribute("result", "Users indexed successfully");
-        return "elasticeSearchRes";
+        return RESULT_VIEW;
     }
 
-    @GetMapping("/rest/users/view/{id}")
-    public String view(@PathVariable final String id, final Model model) throws IOException {
-        try (RestHighLevelClient client = ElasticsearchUtil.getRestHighLevelClient()) {
-            GetRequest getRequest = new GetRequest("users", id);
-            GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+    /**
+     * Retrieves an indexed user's name.
+     *
+     * @param id Elasticsearch document identifier
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping("/rest/" + USERS_INDEX + "/view/{id}")
+    public String view(
+            @PathVariable final String id,
+            final Model model) throws IOException {
+        try (RestHighLevelClient client =
+                     ElasticsearchUtil.getRestHighLevelClient()) {
+            GetRequest getRequest = new GetRequest(USERS_INDEX, id);
+            GetResponse getResponse = client.get(
+                    getRequest, RequestOptions.DEFAULT);
 
             Map<String, Object> source = getResponse.getSource();
-            model.addAttribute("res", source == null ? null : source.get("name"));
+            model.addAttribute(
+                    "res", source == null ? null : source.get("name"));
         }
 
-        return "elasticeSearchRes";
+        return RESULT_VIEW;
     }
 
-    @GetMapping("/rest/users/update/{id}")
-    public String update(@PathVariable final String id, final Model model) throws IOException {
-        try (RestHighLevelClient client = ElasticsearchUtil.getRestHighLevelClient()) {
-            UpdateRequest updateRequest = new UpdateRequest("users", id)
+    /**
+     * Updates the indexed user's gender.
+     *
+     * @param id Elasticsearch document identifier
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping("/rest/" + USERS_INDEX + "/update/{id}")
+    public String update(
+            @PathVariable final String id,
+            final Model model) throws IOException {
+        try (RestHighLevelClient client =
+                     ElasticsearchUtil.getRestHighLevelClient()) {
+            UpdateRequest updateRequest = new UpdateRequest(USERS_INDEX, id)
                     .doc(XContentFactory.jsonBuilder()
                             .startObject()
                             .field("gender", "male")
                             .endObject());
 
-            UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
-            LOGGER.info("Elasticsearch update status: {}", updateResponse.status());
+            UpdateResponse updateResponse = client.update(
+                    updateRequest, RequestOptions.DEFAULT);
+            LOGGER.info("Elasticsearch update status: {}",
+                    updateResponse.status());
             model.addAttribute("res", updateResponse.status());
         }
 
-        return "elasticeSearchRes";
+        return RESULT_VIEW;
     }
 
-    @GetMapping("/rest/users/delete/{id}")
-    public String delete(@PathVariable final String id, final Model model) throws IOException {
-        try (RestHighLevelClient client = ElasticsearchUtil.getRestHighLevelClient()) {
-            DeleteRequest deleteRequest = new DeleteRequest("users", id);
-            DeleteResponse deleteResponse = client.delete(deleteRequest, RequestOptions.DEFAULT);
+    /**
+     * Deletes an indexed user.
+     *
+     * @param id Elasticsearch document identifier
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping("/rest/" + USERS_INDEX + "/delete/{id}")
+    public String delete(
+            @PathVariable final String id,
+            final Model model) throws IOException {
+        try (RestHighLevelClient client =
+                     ElasticsearchUtil.getRestHighLevelClient()) {
+            DeleteRequest deleteRequest = new DeleteRequest(USERS_INDEX, id);
+            DeleteResponse deleteResponse = client.delete(
+                    deleteRequest, RequestOptions.DEFAULT);
 
             String result = deleteResponse.getResult().toString();
             LOGGER.info("Elasticsearch delete result: {}", result);
             model.addAttribute("res", result);
         }
 
-        return "elasticeSearchRes";
+        return RESULT_VIEW;
     }
 }

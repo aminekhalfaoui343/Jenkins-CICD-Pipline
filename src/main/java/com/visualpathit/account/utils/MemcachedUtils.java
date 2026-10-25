@@ -16,18 +16,37 @@ import com.visualpathit.account.beans.Components;
 import com.visualpathit.account.model.User;
 
 @Service
-public class MemcachedUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedUtils.class);
+public final class MemcachedUtils {
+    /** Cache entry lifetime in seconds. */
+    private static final int CACHE_EXPIRATION_SECONDS = 900;
+    /** Memcached stat key used to identify a healthy server. */
     private static final String SERVER_ID_STAT = "pid";
+    /** Logger for cache availability and operation errors. */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(MemcachedUtils.class);
 
+    /** Application configuration for cache endpoints. */
     private static Components object;
 
+    /**
+     * Sets the injected application configuration.
+     *
+     * @param configuration configuration containing cache endpoints
+     */
     @Autowired
-    public void setComponents(Components components) {
-        MemcachedUtils.object = components;
+    public void setComponents(final Components configuration) {
+        MemcachedUtils.object = configuration;
     }
 
-    public static String memcachedSetData(User user, String key) {
+    /**
+     * Stores a user in the cache when a cache server is available.
+     *
+     * @param user user to cache
+     * @param key cache key
+     * @return existing cache operation status message
+     */
+    public static String memcachedSetData(
+            final User user, final String key) {
         if (user == null || !StringUtils.hasText(key)) {
             return "Memcached Connection Failure !!";
         }
@@ -38,7 +57,8 @@ public class MemcachedUtils {
             if (client == null) {
                 return "Memcached Connection Failure !!";
             }
-            Future<Boolean> result = client.set(key, 900, user);
+            Future<Boolean> result = client.set(
+                    key, CACHE_EXPIRATION_SECONDS, user);
             return Boolean.TRUE.equals(result.get())
                     ? " Data is From DB and Data Inserted In Cache !!"
                     : "Memcached Connection Failure !!";
@@ -50,7 +70,13 @@ public class MemcachedUtils {
         }
     }
 
-    public static User memcachedGetData(String key) {
+    /**
+     * Retrieves a cached user when available.
+     *
+     * @param key cache key
+     * @return cached user or {@code null} if unavailable
+     */
+    public static User memcachedGetData(final String key) {
         if (!StringUtils.hasText(key)) {
             return null;
         }
@@ -64,70 +90,96 @@ public class MemcachedUtils {
             Object cachedValue = client.get(key);
             return cachedValue instanceof User user ? user : null;
         } catch (Exception exception) {
-            LOGGER.warn("Unable to retrieve user data from Memcached", exception);
+            LOGGER.warn(
+                    "Unable to retrieve user data from Memcached", exception);
             return null;
         } finally {
             shutdown(client);
         }
     }
 
+    /**
+     * Connects to the active cache and falls back to the standby server.
+     *
+     * @return connected cache client, or {@code null} if neither server is
+     *         available
+     */
     public static MemcachedClient memcachedConnection() {
         if (object == null) {
             LOGGER.warn("Memcached configuration is not initialized");
             return null;
         }
 
-        MemcachedClient activeClient = connect(object.getActiveHost(), object.getActivePort());
+        MemcachedClient activeClient = connect(
+                object.getActiveHost(), object.getActivePort());
         return activeClient != null
                 ? activeClient
-                : connect(object.getStandByHost(), object.getStandByPort());
+                : connect(
+                        object.getStandByHost(), object.getStandByPort());
     }
 
+    /**
+     * Connects to the configured standby cache server.
+     *
+     * @return standby cache client, or {@code null} if unavailable
+     */
     public static MemcachedClient standByMemcachedConn() {
         if (object == null) {
             LOGGER.warn("Memcached configuration is not initialized");
             return null;
         }
-        return connect(object.getStandByHost(), object.getStandByPort());
+        return connect(
+                object.getStandByHost(), object.getStandByPort());
     }
 
-    private static MemcachedClient connect(String host, String port) {
+    private static MemcachedClient connect(
+            final String host, final String port) {
         if (!StringUtils.hasText(host) || !StringUtils.hasText(port)) {
             return null;
         }
 
         MemcachedClient client = null;
         try {
-            client = new MemcachedClient(new InetSocketAddress(host, Integer.parseInt(port)));
+            client = new MemcachedClient(
+                    new InetSocketAddress(host, Integer.parseInt(port)));
             if (hasServerId(client.getStats())) {
                 return client;
             }
-            LOGGER.warn("Memcached server {} did not return its health statistics", host);
+            LOGGER.warn(
+                    "Memcached server {} did not return its health statistics",
+                    host);
         } catch (Exception exception) {
-            LOGGER.warn("Unable to connect to Memcached server {}", host, exception);
+            LOGGER.warn(
+                    "Unable to connect to Memcached server {}",
+                    host, exception);
         }
         shutdown(client);
         return null;
     }
 
-    private static boolean hasServerId(Map<SocketAddress, Map<String, String>> stats) {
+    private static boolean hasServerId(
+            final Map<SocketAddress, Map<String, String>> stats) {
         if (stats == null) {
             return false;
         }
         for (Map<String, String> serverStats : stats.values()) {
-            if (serverStats != null && StringUtils.hasText(serverStats.get(SERVER_ID_STAT))) {
+            if (serverStats != null
+                    && StringUtils.hasText(
+                            serverStats.get(SERVER_ID_STAT))) {
                 return true;
             }
         }
         return false;
     }
 
-    private static void shutdown(MemcachedClient client) {
+    private static void shutdown(final MemcachedClient client) {
         if (client != null) {
             try {
                 client.shutdown();
             } catch (RuntimeException exception) {
-                LOGGER.warn("Unable to shut down Memcached client cleanly", exception);
+                LOGGER.warn(
+                        "Unable to shut down Memcached client cleanly",
+                        exception);
             }
         }
     }

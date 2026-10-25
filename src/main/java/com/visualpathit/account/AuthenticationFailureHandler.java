@@ -7,11 +7,25 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 
 import java.io.IOException;
 
-public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+/**
+ * Redirects failed authentication attempts to the login page.
+ */
+public final class AuthenticationFailureHandler
+        extends SimpleUrlAuthenticationFailureHandler {
 
+    /**
+     * Redirects the response after an authentication failure.
+     *
+     * @param request current servlet request
+     * @param response servlet response to redirect
+     * @param exception authentication failure
+     * @throws IOException if writing the redirect fails
+     */
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException {
+    public void onAuthenticationFailure(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final AuthenticationException exception) throws IOException {
         // Redirect to custom error page
         getRedirectStrategy().sendRedirect(request, response, "/login?error");
     }

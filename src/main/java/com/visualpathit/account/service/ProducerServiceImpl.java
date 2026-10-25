@@ -15,38 +15,36 @@ import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
 @Service
-public class ProducerServiceImpl implements ProducerService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProducerServiceImpl.class);
+public final class ProducerServiceImpl implements ProducerService {
+    /** Logger for RabbitMQ publishing errors. */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ProducerServiceImpl.class);
 
-    /**
-     *  The name of the Exchange
-     */
+    /** Name of the message exchange. */
     private static final String EXCHANGE_NAME = "messages";
 
     /**
-     *  This method publishes a message
-     * @param message
+     * Publishes a message to the configured fanout exchange.
+     *
+     * @param message message body
+     * @return the existing response value
      */
     @Override
-    public String produceMessage(String message) {
+    public String produceMessage(final String message) {
         Objects.requireNonNull(message, "message");
 
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            /**
-            * System.out.println("Rabitmq host: ::" + RabbitMqUtil.getRabbitMqHost());
-            * System.out.println("Rabitmq port: ::" + RabbitMqUtil.getRabbitMqPort());
-            * System.out.println("Rabitmq user: ::" + RabbitMqUtil.getRabbitMqUser());
-            * System.out.println("Rabitmq password: ::" + RabbitMqUtil.getRabbitMqPassword());
-            **/
             factory.setHost(RabbitMqUtil.getRabbitMqHost());
             factory.setPort(Integer.parseInt(RabbitMqUtil.getRabbitMqPort()));
             factory.setUsername(RabbitMqUtil.getRabbitMqUser());
             factory.setPassword(RabbitMqUtil.getRabbitMqPassword());
             try (Connection connection = factory.newConnection();
-                 Channel channel = connection.createChannel()) {
+                    Channel channel = connection.createChannel()) {
                 channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
-                channel.basicPublish(EXCHANGE_NAME, "", null, message.getBytes(StandardCharsets.UTF_8));
+                channel.basicPublish(
+                        EXCHANGE_NAME, "", null,
+                        message.getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException io) {
             LOGGER.error("Unable to publish RabbitMQ message", io);

@@ -2,28 +2,54 @@ package com.visualpathit.account.dto;
 
 import com.visualpathit.account.model.User;
 
-/** Safe user details exposed to the application's views. */
-public class UserViewDto {
+/**
+ * Safe user profile details exposed to application views.
+ */
+public final class UserViewDto {
+    /** Persistent user identifier. */
     private Long id;
+    /** Account username. */
     private String username;
+    /** User email address. */
     private String userEmail;
+    /** User date of birth. */
     private String dateOfBirth;
+    /** User's father's name. */
     private String fatherName;
+    /** User's mother's name. */
     private String motherName;
+    /** User gender. */
     private String gender;
+    /** User marital status. */
     private String maritalStatus;
+    /** User permanent address. */
     private String permanentAddress;
+    /** User temporary address. */
     private String tempAddress;
+    /** User primary occupation. */
     private String primaryOccupation;
+    /** User secondary occupation. */
     private String secondaryOccupation;
+    /** User skills. */
     private String skills;
+    /** User primary phone number. */
     private String phoneNumber;
+    /** User secondary phone number. */
     private String secondaryPhoneNumber;
+    /** User nationality. */
     private String nationality;
+    /** User spoken language. */
     private String language;
+    /** User working experience. */
     private String workingExperience;
 
-    public static UserViewDto fromUser(User user) {
+    /**
+     * Creates a safe view DTO from a persistent user.
+     *
+     * @param user source user
+     * @return view DTO, or {@code null} if the source is {@code null}
+     */
+    public static UserViewDto fromUser(final User user) {
         if (user == null) {
             return null;
         }
@@ -50,22 +76,93 @@ public class UserViewDto {
         return view;
     }
 
-    public Long getId() { return id; }
-    public String getUsername() { return username; }
-    public String getUserEmail() { return userEmail; }
-    public String getDateOfBirth() { return dateOfBirth; }
-    public String getFatherName() { return fatherName; }
-    public String getMotherName() { return motherName; }
-    public String getGender() { return gender; }
-    public String getMaritalStatus() { return maritalStatus; }
-    public String getPermanentAddress() { return permanentAddress; }
-    public String getTempAddress() { return tempAddress; }
-    public String getPrimaryOccupation() { return primaryOccupation; }
-    public String getSecondaryOccupation() { return secondaryOccupation; }
-    public String getSkills() { return skills; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getSecondaryPhoneNumber() { return secondaryPhoneNumber; }
-    public String getNationality() { return nationality; }
-    public String getLanguage() { return language; }
-    public String getWorkingExperience() { return workingExperience; }
+    /** @return persistent user identifier */
+    public Long getId() {
+        return id;
+    }
+
+    /** @return username */
+    public String getUsername() {
+        return username;
+    }
+
+    /** @return email address */
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    /** @return date of birth */
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    /** @return father's name */
+    public String getFatherName() {
+        return fatherName;
+    }
+
+    /** @return mother's name */
+    public String getMotherName() {
+        return motherName;
+    }
+
+    /** @return gender */
+    public String getGender() {
+        return gender;
+    }
+
+    /** @return marital status */
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    /** @return permanent address */
+    public String getPermanentAddress() {
+        return permanentAddress;
+    }
+
+    /** @return temporary address */
+    public String getTempAddress() {
+        return tempAddress;
+    }
+
+    /** @return primary occupation */
+    public String getPrimaryOccupation() {
+        return primaryOccupation;
+    }
+
+    /** @return secondary occupation */
+    public String getSecondaryOccupation() {
+        return secondaryOccupation;
+    }
+
+    /** @return skills */
+    public String getSkills() {
+        return skills;
+    }
+
+    /** @return primary phone number */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /** @return secondary phone number */
+    public String getSecondaryPhoneNumber() {
+        return secondaryPhoneNumber;
+    }
+
+    /** @return nationality */
+    public String getNationality() {
+        return nationality;
+    }
+
+    /** @return spoken language */
+    public String getLanguage() {
+        return language;
+    }
+
+    /** @return working experience */
+    public String getWorkingExperience() {
+        return workingExperience;
+    }
 }
