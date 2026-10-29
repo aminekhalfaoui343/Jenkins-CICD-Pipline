@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.visualpathit.account;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+<span class="fc" id="L9">public final class GlobalExceptionHandler {</span>
+    /** Request attribute used to display an error message. */
+    private static final String ERROR_MESSAGE_ATTRIBUTE = &quot;errorMessage&quot;;
+
+    /**
+     * Maps a missing user exception to the application not-found page.
+     *
+     * @param exception exception carrying the missing account details
+     * @param request current servlet request
+     * @return forwarding route for the not-found page
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public String handleUserNotFoundException(
+            final UserNotFoundException exception,
+            final HttpServletRequest request) {
+<span class="fc" id="L24">        request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, exception.getMessage());</span>
+<span class="fc" id="L25">        return &quot;forward:/WEB-INF/views/error/404.jsp&quot;;</span>
+    }
+
+    /**
+     * Maps invalid credentials to the application error page.
+     *
+     * @param exception authentication failure
+     * @param request current servlet request
+     * @return forwarding route for the error page
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public String handleBadCredentialsException(
+            final BadCredentialsException exception,
+            final HttpServletRequest request) {
+<span class="fc" id="L39">        request.setAttribute(</span>
+<span class="fc" id="L40">                ERROR_MESSAGE_ATTRIBUTE, &quot;Invalid username or password.&quot;);</span>
+<span class="fc" id="L41">        return &quot;forward:/WEB-INF/views/error/500.jsp&quot;;</span>
+    }
+
+    /**
+     * Maps uncaught application exceptions to the generic error page.
+     *
+     * @param exception unexpected application exception
+     * @param request current servlet request
+     * @return forwarding route for the generic error page
+     */
+    @ExceptionHandler(Exception.class)
+    public String handleGenericException(
+            final Exception exception,
+            final HttpServletRequest request) {
+<span class="fc" id="L55">        request.setAttribute(</span>
+<span class="fc" id="L56">                ERROR_MESSAGE_ATTRIBUTE,</span>
+<span class="fc" id="L57">                &quot;An unexpected error occurred. Please try again later.&quot;);</span>
+<span class="fc" id="L58">        return &quot;forward:/WEB-INF/views/error/500.jsp&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

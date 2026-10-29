@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.service</a> &gt; <span class="el_source">UserServiceImpl.java</span></div><h1>UserServiceImpl.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.service;
+
+import com.visualpathit.account.model.User;
+import com.visualpathit.account.repository.RoleRepository;
+import com.visualpathit.account.repository.UserRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Implements user persistence and password encoding operations.
+ */
+@Service
+public final class UserServiceImpl implements UserService {
+    /** Repository used to store and retrieve users. */
+    private final UserRepository userRepository;
+    /** Repository used to load role assignments. */
+    private final RoleRepository roleRepository;
+    /** Encoder used to hash raw passwords. */
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    /**
+     * Creates the user service.
+     *
+     * @param userRepositoryDependency user repository
+     * @param roleRepositoryDependency role repository
+     * @param passwordEncoder password encoder
+     */
+    @Autowired
+<span class="fc" id="L35">    public UserServiceImpl(</span>
+            final UserRepository userRepositoryDependency,
+            final RoleRepository roleRepositoryDependency,
+            final BCryptPasswordEncoder passwordEncoder) {
+<span class="fc" id="L39">        this.userRepository = Objects.requireNonNull(userRepositoryDependency);</span>
+<span class="fc" id="L40">        this.roleRepository = Objects.requireNonNull(roleRepositoryDependency);</span>
+<span class="fc" id="L41">        this.bCryptPasswordEncoder = Objects.requireNonNull(passwordEncoder);</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Encodes a supplied password and persists the user with current roles.
+     *
+     * @param user user to persist
+     */
+    @Override
+    public void save(final User user) {
+<span class="pc bpc" id="L51" title="1 of 4 branches missed.">        if (user.getPassword() != null &amp;&amp; !user.getPassword().isBlank()) {</span>
+<span class="fc" id="L52">            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));</span>
+        }
+<span class="fc" id="L54">        user.setRoles(new HashSet&lt;&gt;(roleRepository.findAll()));</span>
+<span class="fc" id="L55">        userRepository.save(user);</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Finds an account by username.
+     *
+     * @param username username to find
+     * @return matching user, or {@code null} if no match exists
+     */
+    @Override
+    public User findByUsername(final String username) {
+<span class="fc" id="L66">        return userRepository.findByUsername(username);</span>
+    }
+
+    /**
+     * Returns all persisted users.
+     *
+     * @return all users
+     */
+    @Override
+    public List&lt;User&gt; getList() {
+<span class="fc" id="L76">        return userRepository.findAll();</span>
+    }
+
+    /**
+     * Finds a user by its persistent identifier.
+     *
+     * @param id user identifier
+     * @return matching user, or {@code null} if no match exists
+     */
+    @Override
+    public User findById(final long id) {
+<span class="fc" id="L87">        return userRepository.findById(id).orElse(null);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemcachedUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.utils</a> &gt; <span class="el_source">MemcachedUtils.java</span></div><h1>MemcachedUtils.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.utils;
+
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.Map;
+import java.util.concurrent.Future;
+
+import net.spy.memcached.MemcachedClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.visualpathit.account.beans.Components;
+import com.visualpathit.account.model.User;
+
+@Service
+public final class MemcachedUtils {
+    /** Cache entry lifetime in seconds. */
+    private static final int CACHE_EXPIRATION_SECONDS = 900;
+    /** Memcached stat key used to identify a healthy server. */
+    private static final String SERVER_ID_STAT = &quot;pid&quot;;
+    /** Status returned when a cache connection or write fails. */
+    public static final String MEMCACHED_CONNECTION_FAILURE =
+            &quot;Memcached Connection Failure !!&quot;;
+    /** Logger for cache availability and operation errors. */
+<span class="fc" id="L27">    private static final Logger LOGGER =</span>
+<span class="fc" id="L28">            LoggerFactory.getLogger(MemcachedUtils.class);</span>
+
+    /** Application configuration for cache endpoints. */
+    private final Components components;
+
+    /**
+     * Creates the cache utility with injected application configuration.
+     *
+     * @param configuration configuration containing cache endpoints
+     */
+<span class="fc" id="L38">    public MemcachedUtils(final Components configuration) {</span>
+<span class="fc" id="L39">        this.components = configuration;</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Stores a user in the cache when a cache server is available.
+     *
+     * @param user user to cache
+     * @param key cache key
+     * @return existing cache operation status message
+     */
+    public String memcachedSetData(
+            final User user, final String key) {
+<span class="pc bpc" id="L51" title="1 of 4 branches missed.">        if (user == null || !StringUtils.hasText(key)) {</span>
+<span class="fc" id="L52">            return MEMCACHED_CONNECTION_FAILURE;</span>
+        }
+
+<span class="fc" id="L55">        MemcachedClient client = null;</span>
+        try {
+<span class="fc" id="L57">            client = memcachedConnection();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if (client == null) {</span>
+<span class="fc" id="L59">                return MEMCACHED_CONNECTION_FAILURE;</span>
+            }
+<span class="fc" id="L61">            Future&lt;Boolean&gt; result = client.set(</span>
+<span class="fc" id="L62">                    key, CACHE_EXPIRATION_SECONDS, user);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            return Boolean.TRUE.equals(result.get())</span>
+<span class="fc" id="L64">                    ? &quot; Data is From DB and Data Inserted In Cache !!&quot;</span>
+<span class="pc" id="L65">                    : MEMCACHED_CONNECTION_FAILURE;</span>
+<span class="fc" id="L66">        } catch (InterruptedException exception) {</span>
+<span class="fc" id="L67">            Thread.currentThread().interrupt();</span>
+<span class="fc" id="L68">            LOGGER.warn(&quot;Unable to store user data in Memcached&quot;, exception);</span>
+<span class="fc" id="L69">            return MEMCACHED_CONNECTION_FAILURE;</span>
+<span class="nc" id="L70">        } catch (Exception exception) {</span>
+<span class="nc" id="L71">            LOGGER.warn(&quot;Unable to store user data in Memcached&quot;, exception);</span>
+<span class="nc" id="L72">            return MEMCACHED_CONNECTION_FAILURE;</span>
+        } finally {
+<span class="fc" id="L74">            shutdown(client);</span>
+        }
+    }
+
+    /**
+     * Retrieves a cached user when available.
+     *
+     * @param key cache key
+     * @return cached user or {@code null} if unavailable
+     */
+    public User memcachedGetData(final String key) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (!StringUtils.hasText(key)) {</span>
+<span class="fc" id="L86">            return null;</span>
+        }
+
+<span class="fc" id="L89">        MemcachedClient client = null;</span>
+        try {
+<span class="fc" id="L91">            client = memcachedConnection();</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            if (client == null) {</span>
+<span class="fc" id="L93">                return null;</span>
+            }
+<span class="fc" id="L95">            Object cachedValue = client.get(key);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            return cachedValue instanceof User user ? user : null;</span>
+<span class="nc" id="L97">        } catch (Exception exception) {</span>
+<span class="nc" id="L98">            LOGGER.warn(</span>
+<span class="nc" id="L99">                    &quot;Unable to retrieve user data from Memcached&quot;, exception);</span>
+<span class="nc" id="L100">            return null;</span>
+        } finally {
+<span class="fc" id="L102">            shutdown(client);</span>
+        }
+    }
+
+    /**
+     * Connects to the active cache and falls back to the standby server.
+     *
+     * @return connected cache client, or {@code null} if neither server is
+     *         available
+     */
+    public MemcachedClient memcachedConnection() {
+<span class="fc" id="L113">        MemcachedClient activeClient = connect(</span>
+<span class="fc" id="L114">                components.getActiveHost(), components.getActivePort());</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        return activeClient != null</span>
+<span class="fc" id="L116">                ? activeClient</span>
+<span class="fc" id="L117">                : connect(</span>
+<span class="fc" id="L118">                        components.getStandByHost(),</span>
+<span class="fc" id="L119">                        components.getStandByPort());</span>
+    }
+
+    /**
+     * Connects to the configured standby cache server.
+     *
+     * @return standby cache client, or {@code null} if unavailable
+     */
+    public MemcachedClient standByMemcachedConn() {
+<span class="fc" id="L128">        return connect(</span>
+<span class="fc" id="L129">                components.getStandByHost(), components.getStandByPort());</span>
+    }
+
+    private MemcachedClient connect(
+            final String host, final String port) {
+<span class="pc bpc" id="L134" title="1 of 4 branches missed.">        if (!StringUtils.hasText(host) || !StringUtils.hasText(port)) {</span>
+<span class="fc" id="L135">            return null;</span>
+        }
+
+<span class="fc" id="L138">        MemcachedClient client = null;</span>
+        try {
+<span class="fc" id="L140">            client = new MemcachedClient(</span>
+<span class="fc" id="L141">                    new InetSocketAddress(host, Integer.parseInt(port)));</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            if (hasServerId(client.getStats())) {</span>
+<span class="fc" id="L143">                return client;</span>
+            }
+<span class="nc" id="L145">            LOGGER.warn(</span>
+<span class="nc" id="L146">                    &quot;Memcached server {} did not return its health statistics&quot;,</span>
+<span class="nc" id="L147">                    host);</span>
+<span class="nc" id="L148">        } catch (Exception exception) {</span>
+<span class="nc" id="L149">            LOGGER.warn(</span>
+<span class="nc" id="L150">                    &quot;Unable to connect to Memcached server {}&quot;,</span>
+<span class="nc" id="L151">                    host, exception);</span>
+        }
+<span class="nc" id="L153">        shutdown(client);</span>
+<span class="nc" id="L154">        return null;</span>
+    }
+
+    private boolean hasServerId(
+            final Map&lt;SocketAddress, Map&lt;String, String&gt;&gt; stats) {
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        if (stats == null) {</span>
+<span class="nc" id="L160">            return false;</span>
+        }
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        for (Map&lt;String, String&gt; serverStats : stats.values()) {</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            if (serverStats != null</span>
+<span class="fc" id="L164">                    &amp;&amp; StringUtils.hasText(</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">                            serverStats.get(SERVER_ID_STAT))) {</span>
+<span class="fc" id="L166">                return true;</span>
+            }
+        }
+<span class="nc" id="L169">        return false;</span>
+    }
+
+    private void shutdown(final MemcachedClient client) {
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (client != null) {</span>
+            try {
+<span class="fc" id="L175">                client.shutdown();</span>
+<span class="pc" id="L176">            } catch (RuntimeException exception) {</span>
+<span class="nc" id="L177">                LOGGER.warn(</span>
+<span class="nc" id="L178">                        &quot;Unable to shut down Memcached client cleanly&quot;,</span>
+<span class="nc" id="L179">                        exception);</span>
+            }
+        }
+<span class="fc" id="L182">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

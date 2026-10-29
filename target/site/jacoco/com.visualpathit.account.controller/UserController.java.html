@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.controller;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.visualpathit.account.dto.UserFormDto;
+import com.visualpathit.account.dto.UserViewDto;
+import com.visualpathit.account.model.User;
+import com.visualpathit.account.service.SecurityService;
+import com.visualpathit.account.service.UserService;
+import com.visualpathit.account.utils.MemcachedUtils;
+import com.visualpathit.account.validator.UserValidator;
+
+@Controller
+public final class UserController {
+    /** Model attribute used to render login and lookup errors. */
+    private static final String ERROR_ATTRIBUTE = &quot;error&quot;;
+    /** View rendered when a user cannot be found. */
+    private static final String NOT_FOUND_VIEW = &quot;error/404&quot;;
+
+    /** User persistence service. */
+    private final UserService userService;
+
+    /** Service responsible for authentication and session setup. */
+    private final SecurityService securityService;
+
+    /** Registration validator. */
+    private final UserValidator userValidator;
+
+    /** Cache utility used to load and store user details. */
+    private final MemcachedUtils memcachedUtils;
+
+    /**
+     * Creates the user controller.
+     *
+     * @param userServiceDependency user persistence service
+     * @param securityServiceDependency authentication service
+     * @param userValidatorDependency registration validator
+     * @param cacheUtils cache utility
+     */
+<span class="fc" id="L51">    public UserController(</span>
+            final UserService userServiceDependency,
+            final SecurityService securityServiceDependency,
+            final UserValidator userValidatorDependency,
+            final MemcachedUtils cacheUtils) {
+<span class="fc" id="L56">        this.userService = userServiceDependency;</span>
+<span class="fc" id="L57">        this.securityService = securityServiceDependency;</span>
+<span class="fc" id="L58">        this.userValidator = userValidatorDependency;</span>
+<span class="fc" id="L59">        this.memcachedUtils = cacheUtils;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Displays the registration form.
+     *
+     * @param model view model
+     * @return registration view
+     */
+    @GetMapping(&quot;/registration&quot;)
+    public String registration(final Model model) {
+<span class="fc" id="L70">        model.addAttribute(&quot;userForm&quot;, new UserFormDto());</span>
+<span class="fc" id="L71">        return &quot;registration&quot;;</span>
+    }
+
+    /**
+     * Validates and saves a new user, then authenticates the new account.
+     *
+     * @param userForm registration form data
+     * @param bindingResult validation results
+     * @param model view model
+     * @return registration view or redirect after registration
+     */
+    @PostMapping(&quot;/registration&quot;)
+    public String registration(
+            @ModelAttribute(&quot;userForm&quot;) @Valid final UserFormDto userForm,
+            final BindingResult bindingResult,
+            final Model model) {
+<span class="fc" id="L87">        userValidator.validate(userForm, bindingResult);</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (bindingResult.hasErrors()) {</span>
+<span class="fc" id="L90">            return &quot;registration&quot;;</span>
+        }
+
+<span class="fc" id="L93">        User user = userForm.toNewUser();</span>
+<span class="fc" id="L94">        userService.save(user);</span>
+<span class="fc" id="L95">        boolean loginSuccessful = securityService.autologin(</span>
+<span class="fc" id="L96">                user.getUsername(), userForm.getPasswordConfirm());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (!loginSuccessful) {</span>
+<span class="fc" id="L98">            return &quot;redirect:/login?error&quot;;</span>
+        }
+
+<span class="fc" id="L101">        return &quot;redirect:/welcome&quot;;</span>
+    }
+
+    /**
+     * Displays login status messages.
+     *
+     * @param model view model
+     * @param error login error request parameter
+     * @param logout logout request parameter
+     * @return login view
+     */
+    @GetMapping({&quot;/&quot;, &quot;/login&quot;})
+    public String login(
+            final Model model,
+            @RequestParam(value = ERROR_ATTRIBUTE, required = false)
+            final String error,
+            @RequestParam(value = &quot;logout&quot;, required = false)
+            final String logout) {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (error != null) {</span>
+<span class="fc" id="L120">            model.addAttribute(ERROR_ATTRIBUTE,</span>
+<span class="fc" id="L121">                    &quot;Your username and password is invalid.&quot;);</span>
+        }
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (logout != null) {</span>
+<span class="fc" id="L124">            model.addAttribute(&quot;message&quot;,</span>
+<span class="fc" id="L125">                    &quot;You have been logged out successfully.&quot;);</span>
+        }
+<span class="fc" id="L127">        return &quot;login&quot;;</span>
+    }
+
+    /**
+     * Authenticates the submitted login form.
+     *
+     * @param user login form data
+     * @param model view model
+     * @return login view or welcome redirect
+     */
+    @PostMapping(&quot;/login&quot;)
+    public String loginPost(
+            @ModelAttribute(&quot;user&quot;) final UserFormDto user,
+            final Model model) {
+<span class="fc" id="L141">        boolean loginSuccessful = securityService.autologin(</span>
+<span class="fc" id="L142">                user.getUsername(), user.getPassword());</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if (!loginSuccessful) {</span>
+<span class="fc" id="L144">            model.addAttribute(ERROR_ATTRIBUTE,</span>
+<span class="fc" id="L145">                    &quot;Your username and password is invalid.&quot;);</span>
+<span class="fc" id="L146">            return &quot;login&quot;;</span>
+        }
+<span class="nc" id="L148">        return &quot;redirect:/welcome&quot;;</span>
+    }
+
+    /**
+     * Displays the welcome page.
+     *
+     * @return welcome view
+     */
+    @GetMapping(&quot;/welcome&quot;)
+    public String welcome() {
+<span class="fc" id="L158">        return &quot;welcome&quot;;</span>
+    }
+
+    /**
+     * Displays the index page.
+     *
+     * @return index view
+     */
+    @GetMapping(&quot;/index&quot;)
+    public String indexHome() {
+<span class="fc" id="L168">        return &quot;index_home&quot;;</span>
+    }
+
+    /**
+     * Lists users using safe view DTOs.
+     *
+     * @param model view model
+     * @return user list view
+     */
+    @GetMapping(&quot;/users&quot;)
+    public String getAllUsers(final Model model) {
+<span class="fc" id="L179">        List&lt;UserViewDto&gt; users = userService.getList().stream()</span>
+<span class="fc" id="L180">                .map(UserViewDto::fromUser)</span>
+<span class="fc" id="L181">                .collect(Collectors.toList());</span>
+<span class="fc" id="L182">        model.addAttribute(&quot;users&quot;, users);</span>
+<span class="fc" id="L183">        return &quot;userList&quot;;</span>
+    }
+
+    /**
+     * Displays a user's details, using Memcached when available.
+     *
+     * @param id user identifier
+     * @param model view model
+     * @return user details view or not-found view
+     */
+    @GetMapping(&quot;/users/{id}&quot;)
+    public String getOneUser(
+            @PathVariable(&quot;id&quot;) final String id,
+            final Model model) {
+        String result;
+        try {
+<span class="fc" id="L199">            User userData = memcachedUtils.memcachedGetData(id);</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">            if (userData != null) {</span>
+<span class="fc" id="L201">                result = &quot;Data is From Cache&quot;;</span>
+<span class="fc" id="L202">                model.addAttribute(&quot;user&quot;, UserViewDto.fromUser(userData));</span>
+<span class="fc" id="L203">            } else {</span>
+<span class="fc" id="L204">                User user = userService.findById(Long.parseLong(id));</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                if (user == null) {</span>
+<span class="fc" id="L206">                    model.addAttribute(ERROR_ATTRIBUTE, &quot;User not found&quot;);</span>
+<span class="fc" id="L207">                    return NOT_FOUND_VIEW;</span>
+                }
+<span class="fc" id="L209">                result = memcachedUtils.memcachedSetData(user, id);</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                if (result == null) {</span>
+<span class="nc" id="L211">                    result = MemcachedUtils.MEMCACHED_CONNECTION_FAILURE;</span>
+                }
+<span class="fc" id="L213">                model.addAttribute(&quot;user&quot;, UserViewDto.fromUser(user));</span>
+            }
+<span class="fc" id="L215">            model.addAttribute(&quot;Result&quot;, result);</span>
+<span class="fc" id="L216">        } catch (NumberFormatException exception) {</span>
+<span class="fc" id="L217">            model.addAttribute(ERROR_ATTRIBUTE, &quot;Unable to load user&quot;);</span>
+<span class="fc" id="L218">            return NOT_FOUND_VIEW;</span>
+        }
+<span class="fc" id="L220">        return &quot;user&quot;;</span>
+    }
+
+    /**
+     * Displays the profile update form for the named user.
+     *
+     * @param username username to edit
+     * @param model view model
+     * @return profile form view or not-found view
+     */
+    @GetMapping(&quot;/user/{username}&quot;)
+    public String userUpdate(
+            @PathVariable(&quot;username&quot;) final String username,
+            final Model model) {
+<span class="fc" id="L234">        User user = userService.findByUsername(username);</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">        if (user == null) {</span>
+<span class="nc" id="L236">            model.addAttribute(ERROR_ATTRIBUTE, &quot;User not found&quot;);</span>
+<span class="nc" id="L237">            return NOT_FOUND_VIEW;</span>
+        }
+<span class="fc" id="L239">        model.addAttribute(&quot;user&quot;, UserFormDto.fromUser(user));</span>
+<span class="fc" id="L240">        return &quot;userUpdate&quot;;</span>
+    }
+
+    /**
+     * Applies profile form data and saves the updated user.
+     *
+     * @param username username identifying the account
+     * @param userForm submitted profile data
+     * @return welcome view or not-found view
+     */
+    @PostMapping(&quot;/user/{username}&quot;)
+    public String userUpdateProfile(
+            @PathVariable(&quot;username&quot;) final String username,
+            @ModelAttribute(&quot;user&quot;) final UserFormDto userForm) {
+<span class="fc" id="L254">        User user = userService.findByUsername(username);</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L256">            return NOT_FOUND_VIEW;</span>
+        }
+<span class="fc" id="L258">        userForm.copyProfileTo(user);</span>
+<span class="fc" id="L259">        userService.save(user);</span>
+<span class="fc" id="L260">        return &quot;welcome&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

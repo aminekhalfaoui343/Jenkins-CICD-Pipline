@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserFormDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.dto</a> &gt; <span class="el_source">UserFormDto.java</span></div><h1>UserFormDto.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.BeanUtils;
+
+import com.visualpathit.account.model.User;
+
+/**
+ * Mutable form payload for registration, login, and profile updates.
+ */
+@Getter
+@Setter
+<span class="fc" id="L14">public final class UserFormDto {</span>
+    private String username;
+    private String password;
+    private String passwordConfirm;
+    private String userEmail;
+    private String dateOfBirth;
+    private String fatherName;
+    private String motherName;
+    private String gender;
+    private String maritalStatus;
+    private String permanentAddress;
+    private String tempAddress;
+    private String primaryOccupation;
+    private String secondaryOccupation;
+    private String skills;
+    private String phoneNumber;
+    private String secondaryPhoneNumber;
+    private String nationality;
+    private String language;
+    private String workingExperience;
+
+    /**
+     * Creates form data populated from a persistent user.
+     *
+     * @param user source user
+     * @return form populated with editable profile fields
+     */
+    public static UserFormDto fromUser(final User user) {
+<span class="fc" id="L42">        UserFormDto form = new UserFormDto();</span>
+<span class="fc" id="L43">        BeanUtils.copyProperties(user, form, &quot;password&quot;, &quot;passwordConfirm&quot;);</span>
+<span class="fc" id="L44">        return form;</span>
+    }
+
+    /**
+     * Creates a new persistent user from the submitted form.
+     *
+     * @return a new user containing the submitted fields
+     */
+    public User toNewUser() {
+<span class="fc" id="L53">        User user = new User();</span>
+<span class="fc" id="L54">        BeanUtils.copyProperties(this, user, &quot;passwordConfirm&quot;);</span>
+<span class="fc" id="L55">        return user;</span>
+    }
+
+    /**
+     * Copies editable profile fields to an existing persistent user.
+     *
+     * @param target user whose profile fields are updated
+     */
+    public void copyProfileTo(final User target) {
+<span class="fc" id="L64">        BeanUtils.copyProperties(this, target, &quot;password&quot;, &quot;passwordConfirm&quot;);</span>
+<span class="fc" id="L65">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

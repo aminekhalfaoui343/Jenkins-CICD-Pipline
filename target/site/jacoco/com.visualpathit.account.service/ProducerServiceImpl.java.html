@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProducerServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.service</a> &gt; <span class="el_source">ProducerServiceImpl.java</span></div><h1>ProducerServiceImpl.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.service;
+
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.visualpathit.account.utils.RabbitMqUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import com.rabbitmq.client.Channel;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.concurrent.TimeoutException;
+
+@Service
+public final class ProducerServiceImpl implements ProducerService {
+    /** Logger for RabbitMQ publishing errors. */
+<span class="fc" id="L20">    private static final Logger LOGGER =</span>
+<span class="fc" id="L21">            LoggerFactory.getLogger(ProducerServiceImpl.class);</span>
+
+    /** Name of the message exchange. */
+<span class="fc" id="L24">    private static final String EXCHANGE_NAME = &quot;messages&quot;;</span>
+
+    /** RabbitMQ connection settings. */
+    private final RabbitMqUtil rabbitMqUtil;
+
+    /**
+     * Creates the producer with RabbitMQ connection settings.
+     *
+     * @param settings RabbitMQ connection settings
+     */
+<span class="fc" id="L34">    public ProducerServiceImpl(final RabbitMqUtil settings) {</span>
+<span class="fc" id="L35">        this.rabbitMqUtil = settings;</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Publishes a message to the configured fanout exchange.
+     *
+     * @param message message body
+     * @return the existing response value
+     */
+    @Override
+    public String produceMessage(final String message) {
+<span class="fc" id="L46">        Objects.requireNonNull(message, &quot;message&quot;);</span>
+
+        try {
+<span class="fc" id="L49">            ConnectionFactory factory = new ConnectionFactory();</span>
+<span class="fc" id="L50">            factory.setHost(rabbitMqUtil.getRabbitMqHost());</span>
+<span class="fc" id="L51">            factory.setPort(Integer.parseInt(rabbitMqUtil.getRabbitMqPort()));</span>
+<span class="fc" id="L52">            factory.setUsername(rabbitMqUtil.getRabbitMqUser());</span>
+<span class="fc" id="L53">            factory.setPassword(rabbitMqUtil.getRabbitMqPassword());</span>
+<span class="fc" id="L54">            try (Connection connection = factory.newConnection();</span>
+<span class="fc" id="L55">                    Channel channel = connection.createChannel()) {</span>
+<span class="fc" id="L56">                channel.exchangeDeclare(EXCHANGE_NAME, &quot;fanout&quot;);</span>
+<span class="fc" id="L57">                channel.basicPublish(</span>
+<span class="fc" id="L58">                        EXCHANGE_NAME, &quot;&quot;, null,</span>
+<span class="fc" id="L59">                        message.getBytes(StandardCharsets.UTF_8));</span>
+            }
+<span class="fc" id="L61">        } catch (IOException io) {</span>
+<span class="fc" id="L62">            LOGGER.error(&quot;Unable to publish RabbitMQ message&quot;, io);</span>
+<span class="fc" id="L63">        } catch (TimeoutException toe) {</span>
+<span class="fc" id="L64">            LOGGER.error(&quot;Timed out while publishing RabbitMQ message&quot;, toe);</span>
+        }
+<span class="fc" id="L66">        return &quot;response&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

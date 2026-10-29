@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ElasticSearchController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.controller</a> &gt; <span class="el_source">ElasticSearchController.java</span></div><h1>ElasticSearchController.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.controller;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.visualpathit.account.model.User;
+import com.visualpathit.account.service.UserService;
+import com.visualpathit.account.utils.ElasticsearchUtil;
+
+@Controller
+public final class ElasticSearchController {
+    /** Elasticsearch index containing user documents. */
+    private static final String USERS_INDEX = &quot;users&quot;;
+    /** View used to display Elasticsearch operation results. */
+    private static final String RESULT_VIEW = &quot;elasticeSearchRes&quot;;
+
+    /** Logger for Elasticsearch operation outcomes. */
+<span class="fc" id="L37">    private static final Logger LOGGER =</span>
+<span class="fc" id="L38">            LoggerFactory.getLogger(ElasticSearchController.class);</span>
+
+    /** User persistence service used to load indexed records. */
+    private final UserService userService;
+
+    /** Elasticsearch client factory. */
+    private final ElasticsearchUtil elasticsearchUtil;
+
+    /**
+     * Creates the Elasticsearch controller.
+     *
+     * @param service user persistence service
+     * @param clientFactory Elasticsearch client factory
+     */
+<span class="fc" id="L52">    public ElasticSearchController(</span>
+            final UserService service,
+            final ElasticsearchUtil clientFactory) {
+<span class="fc" id="L55">        this.userService = service;</span>
+<span class="fc" id="L56">        this.elasticsearchUtil = clientFactory;</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Indexes all users in Elasticsearch.
+     *
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping(&quot;/user/elasticsearch&quot;)
+    public String insert(final Model model) throws IOException {
+<span class="fc" id="L68">        List&lt;User&gt; users = userService.getList();</span>
+
+<span class="fc" id="L70">        try (RestHighLevelClient client =</span>
+<span class="fc" id="L71">                     elasticsearchUtil.getRestHighLevelClient()) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            for (User user : users) {</span>
+<span class="fc" id="L73">                IndexRequest indexRequest = new IndexRequest(USERS_INDEX)</span>
+<span class="fc" id="L74">                        .id(String.valueOf(user.getId()))</span>
+<span class="fc" id="L75">                        .source(XContentFactory.jsonBuilder()</span>
+<span class="fc" id="L76">                                .startObject()</span>
+<span class="fc" id="L77">                                .field(&quot;name&quot;, user.getUsername())</span>
+<span class="fc" id="L78">                                .field(&quot;DOB&quot;, user.getDateOfBirth())</span>
+<span class="fc" id="L79">                                .field(&quot;fatherName&quot;, user.getFatherName())</span>
+<span class="fc" id="L80">                                .field(&quot;motherName&quot;, user.getMotherName())</span>
+<span class="fc" id="L81">                                .field(&quot;gender&quot;, user.getGender())</span>
+<span class="fc" id="L82">                                .field(&quot;nationality&quot;, user.getNationality())</span>
+<span class="fc" id="L83">                                .field(&quot;phoneNumber&quot;, user.getPhoneNumber())</span>
+<span class="fc" id="L84">                                .endObject());</span>
+
+<span class="fc" id="L86">                IndexResponse response = client.index(</span>
+<span class="fc" id="L87">                        indexRequest, RequestOptions.DEFAULT);</span>
+<span class="fc" id="L88">                LOGGER.info(&quot;Indexed user {} with result {}&quot;,</span>
+<span class="fc" id="L89">                        user.getId(), response.getResult());</span>
+            }
+        }
+
+<span class="fc" id="L93">        model.addAttribute(&quot;result&quot;, &quot;Users indexed successfully&quot;);</span>
+<span class="fc" id="L94">        return RESULT_VIEW;</span>
+    }
+
+    /**
+     * Retrieves an indexed user's name.
+     *
+     * @param id Elasticsearch document identifier
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping(&quot;/rest/&quot; + USERS_INDEX + &quot;/view/{id}&quot;)
+    public String view(
+            @PathVariable final String id,
+            final Model model) throws IOException {
+<span class="fc" id="L109">        try (RestHighLevelClient client =</span>
+<span class="fc" id="L110">                     elasticsearchUtil.getRestHighLevelClient()) {</span>
+<span class="fc" id="L111">            GetRequest getRequest = new GetRequest(USERS_INDEX, id);</span>
+<span class="fc" id="L112">            GetResponse getResponse = client.get(</span>
+<span class="fc" id="L113">                    getRequest, RequestOptions.DEFAULT);</span>
+
+<span class="fc" id="L115">            Map&lt;String, Object&gt; source = getResponse.getSource();</span>
+<span class="fc" id="L116">            model.addAttribute(</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">                    &quot;res&quot;, source == null ? null : source.get(&quot;name&quot;));</span>
+        }
+
+<span class="fc" id="L120">        return RESULT_VIEW;</span>
+    }
+
+    /**
+     * Updates the indexed user's gender.
+     *
+     * @param id Elasticsearch document identifier
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping(&quot;/rest/&quot; + USERS_INDEX + &quot;/update/{id}&quot;)
+    public String update(
+            @PathVariable final String id,
+            final Model model) throws IOException {
+<span class="fc" id="L135">        try (RestHighLevelClient client =</span>
+<span class="fc" id="L136">                     elasticsearchUtil.getRestHighLevelClient()) {</span>
+<span class="fc" id="L137">            UpdateRequest updateRequest = new UpdateRequest(USERS_INDEX, id)</span>
+<span class="fc" id="L138">                    .doc(XContentFactory.jsonBuilder()</span>
+<span class="fc" id="L139">                            .startObject()</span>
+<span class="fc" id="L140">                            .field(&quot;gender&quot;, &quot;male&quot;)</span>
+<span class="fc" id="L141">                            .endObject());</span>
+
+<span class="fc" id="L143">            UpdateResponse updateResponse = client.update(</span>
+<span class="fc" id="L144">                    updateRequest, RequestOptions.DEFAULT);</span>
+<span class="fc" id="L145">            LOGGER.info(&quot;Elasticsearch update status: {}&quot;,</span>
+<span class="fc" id="L146">                    updateResponse.status());</span>
+<span class="fc" id="L147">            model.addAttribute(&quot;res&quot;, updateResponse.status());</span>
+        }
+
+<span class="fc" id="L150">        return RESULT_VIEW;</span>
+    }
+
+    /**
+     * Deletes an indexed user.
+     *
+     * @param id Elasticsearch document identifier
+     * @param model view model for the result
+     * @return the Elasticsearch result view
+     * @throws IOException if creating or using the Elasticsearch client fails
+     */
+    @GetMapping(&quot;/rest/&quot; + USERS_INDEX + &quot;/delete/{id}&quot;)
+    public String delete(
+            @PathVariable final String id,
+            final Model model) throws IOException {
+<span class="fc" id="L165">        try (RestHighLevelClient client =</span>
+<span class="fc" id="L166">                     elasticsearchUtil.getRestHighLevelClient()) {</span>
+<span class="fc" id="L167">            DeleteRequest deleteRequest = new DeleteRequest(USERS_INDEX, id);</span>
+<span class="fc" id="L168">            DeleteResponse deleteResponse = client.delete(</span>
+<span class="fc" id="L169">                    deleteRequest, RequestOptions.DEFAULT);</span>
+
+<span class="fc" id="L171">            String result = deleteResponse.getResult().toString();</span>
+<span class="fc" id="L172">            LOGGER.info(&quot;Elasticsearch delete result: {}&quot;, result);</span>
+<span class="fc" id="L173">            model.addAttribute(&quot;res&quot;, result);</span>
+        }
+
+<span class="fc" id="L176">        return RESULT_VIEW;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

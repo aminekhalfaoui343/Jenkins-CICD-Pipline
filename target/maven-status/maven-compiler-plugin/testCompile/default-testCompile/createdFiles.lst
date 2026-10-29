@@ -1,6 +1,6 @@
-com\visualpathit\account\setup\StandaloneMvcTestViewResolver.class
-com\visualpathit\account\modelTest\UserTest.class
-com\visualpathit\account\controllerTest\UserControllerTest.class
+com\visualpathit\account\modeltest\RoleTest.class
 com\visualpathit\account\validator\UserValidatorTest.class
-com\visualpathit\account\controllerTest\SampleTest.class
-com\visualpathit\account\modelTest\RoleTest.class
+com\visualpathit\account\controllertest\SampleTest.class
+com\visualpathit\account\controllertest\UserControllerTest.class
+com\visualpathit\account\setup\StandaloneMvcTestViewResolver.class
+com\visualpathit\account\modeltest\UserTest.class

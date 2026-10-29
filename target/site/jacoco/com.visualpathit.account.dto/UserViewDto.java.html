@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserViewDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.dto</a> &gt; <span class="el_source">UserViewDto.java</span></div><h1>UserViewDto.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.dto;
+
+import lombok.Getter;
+
+import com.visualpathit.account.model.User;
+
+/**
+ * Safe user profile details exposed to application views.
+ */
+@Getter
+<span class="fc" id="L11">public final class UserViewDto {</span>
+    private Long id;
+    private String username;
+    private String userEmail;
+    private String dateOfBirth;
+    private String fatherName;
+    private String motherName;
+    private String gender;
+    private String maritalStatus;
+    private String permanentAddress;
+    private String tempAddress;
+    private String primaryOccupation;
+    private String secondaryOccupation;
+    private String skills;
+    private String phoneNumber;
+    private String secondaryPhoneNumber;
+    private String nationality;
+    private String language;
+    private String workingExperience;
+
+    /**
+     * Creates a safe view DTO from a persistent user.
+     *
+     * @param user source user
+     * @return view DTO, or {@code null} if the source is {@code null}
+     */
+    public static UserViewDto fromUser(final User user) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (user == null) {</span>
+<span class="fc" id="L39">            return null;</span>
+        }
+
+<span class="fc" id="L42">        UserViewDto view = new UserViewDto();</span>
+<span class="fc" id="L43">        view.id = user.getId();</span>
+<span class="fc" id="L44">        view.username = user.getUsername();</span>
+<span class="fc" id="L45">        view.userEmail = user.getUserEmail();</span>
+<span class="fc" id="L46">        view.dateOfBirth = user.getDateOfBirth();</span>
+<span class="fc" id="L47">        view.fatherName = user.getFatherName();</span>
+<span class="fc" id="L48">        view.motherName = user.getMotherName();</span>
+<span class="fc" id="L49">        view.gender = user.getGender();</span>
+<span class="fc" id="L50">        view.maritalStatus = user.getMaritalStatus();</span>
+<span class="fc" id="L51">        view.permanentAddress = user.getPermanentAddress();</span>
+<span class="fc" id="L52">        view.tempAddress = user.getTempAddress();</span>
+<span class="fc" id="L53">        view.primaryOccupation = user.getPrimaryOccupation();</span>
+<span class="fc" id="L54">        view.secondaryOccupation = user.getSecondaryOccupation();</span>
+<span class="fc" id="L55">        view.skills = user.getSkills();</span>
+<span class="fc" id="L56">        view.phoneNumber = user.getPhoneNumber();</span>
+<span class="fc" id="L57">        view.secondaryPhoneNumber = user.getSecondaryPhoneNumber();</span>
+<span class="fc" id="L58">        view.nationality = user.getNationality();</span>
+<span class="fc" id="L59">        view.language = user.getLanguage();</span>
+<span class="fc" id="L60">        view.workingExperience = user.getWorkingExperience();</span>
+<span class="fc" id="L61">        return view;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

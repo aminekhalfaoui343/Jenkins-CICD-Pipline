@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Visualpathit VProfile Webapp</a> &gt; <a href="index.source.html" class="el_package">com.visualpathit.account.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.visualpathit.account.model;
+
+import java.io.Serializable;
+import java.util.Set;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Persistent account and profile information for an application user.
+ */
+@Entity
+@Table(name = &quot;user&quot;)
+@Getter
+@Setter
+<span class="fc" id="L26">public class User implements Serializable {</span>
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private Long id;
+    private String username;
+    private String password;
+    private String userEmail;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private String passwordConfirm;
+    private String profileImg;
+    private String profileImgPath;
+    private String dateOfBirth;
+    private String fatherName;
+    private String motherName;
+    private String gender;
+    private String maritalStatus;
+    private String permanentAddress;
+    private String tempAddress;
+    private String primaryOccupation;
+    private String secondaryOccupation;
+    private String skills;
+    private String phoneNumber;
+    private String secondaryPhoneNumber;
+    private String nationality;
+    private String language;
+    private String workingExperience;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private Set&lt;Role&gt; roles;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long newId) {
+<span class="fc" id="L64">        this.id = newId;</span>
+<span class="fc" id="L65">    }</span>
+
+    @Transient
+    public String getPasswordConfirm() {
+<span class="fc" id="L69">        return passwordConfirm;</span>
+    }
+
+    public void setPasswordConfirm(final String newPasswordConfirm) {
+<span class="fc" id="L73">        this.passwordConfirm = newPasswordConfirm;</span>
+<span class="fc" id="L74">    }</span>
+
+    @ManyToMany
+    @JoinTable(
+            name = &quot;user_role&quot;,
+            joinColumns = @JoinColumn(name = &quot;user_id&quot;),
+            inverseJoinColumns = @JoinColumn(name = &quot;role_id&quot;))
+    public Set&lt;Role&gt; getRoles() {
+<span class="fc" id="L82">        return roles;</span>
+    }
+
+    public void setRoles(final Set&lt;Role&gt; newRoles) {
+<span class="fc" id="L86">        this.roles = newRoles;</span>
+<span class="fc" id="L87">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

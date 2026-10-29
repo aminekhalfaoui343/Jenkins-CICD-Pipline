@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.3">
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\AuthenticationFailureHandler.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\beans\Components.java">
+<error line="15" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="17" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="19" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="21" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="23" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="25" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="27" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="29" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="31" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="33" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="35" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="37" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\beans\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\controller\ElasticSearchController.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\controller\FileUploadController.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\controller\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\controller\RabbitMqController.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\controller\UserController.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\dto\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\dto\UserFormDto.java">
+<error line="15" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="16" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="17" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="18" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="19" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="20" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="21" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="22" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="23" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="24" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="25" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="26" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="27" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="28" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="29" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="30" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="31" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="32" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="33" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\dto\UserViewDto.java">
+<error line="12" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="13" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="14" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="15" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="16" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="17" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="18" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="19" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="20" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="21" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="22" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="23" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="24" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="25" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="26" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="27" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="28" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="29" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\GlobalExceptionHandler.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\model\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\model\Role.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\model\User.java">
+<error line="27" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="30" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="31" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="32" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="33" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="36" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="37" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="38" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="39" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="40" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="41" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="42" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="43" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="44" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="45" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="46" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="47" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="48" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="49" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="50" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="51" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="52" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="53" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocVariableCheck"/>
+<error line="57" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
+<error line="57" column="5" severity="error" message="La classe &apos;User&apos; semble être conçue pour extension (peut être héritée), mais la méthode&apos;getId&apos; n&apos;a pas de Javadoc qui explique comment le faire en toute sécurité. Si la classe n&apos;est pas conçue pour extension, envisagez de rendre la classe &apos;User&apos; finale ou de rendre la méthode &apos;getId&apos; static/final/abstract/empty, d&apos;ajouter les annotations permises pour la méthode." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="63" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
+<error line="63" column="5" severity="error" message="La classe &apos;User&apos; semble être conçue pour extension (peut être héritée), mais la méthode&apos;setId&apos; n&apos;a pas de Javadoc qui explique comment le faire en toute sécurité. Si la classe n&apos;est pas conçue pour extension, envisagez de rendre la classe &apos;User&apos; finale ou de rendre la méthode &apos;setId&apos; static/final/abstract/empty, d&apos;ajouter les annotations permises pour la méthode." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="67" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
+<error line="67" column="5" severity="error" message="La classe &apos;User&apos; semble être conçue pour extension (peut être héritée), mais la méthode&apos;getPasswordConfirm&apos; n&apos;a pas de Javadoc qui explique comment le faire en toute sécurité. Si la classe n&apos;est pas conçue pour extension, envisagez de rendre la classe &apos;User&apos; finale ou de rendre la méthode &apos;getPasswordConfirm&apos; static/final/abstract/empty, d&apos;ajouter les annotations permises pour la méthode." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="72" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
+<error line="72" column="5" severity="error" message="La classe &apos;User&apos; semble être conçue pour extension (peut être héritée), mais la méthode&apos;setPasswordConfirm&apos; n&apos;a pas de Javadoc qui explique comment le faire en toute sécurité. Si la classe n&apos;est pas conçue pour extension, envisagez de rendre la classe &apos;User&apos; finale ou de rendre la méthode &apos;setPasswordConfirm&apos; static/final/abstract/empty, d&apos;ajouter les annotations permises pour la méthode." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="76" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
+<error line="76" column="5" severity="error" message="La classe &apos;User&apos; semble être conçue pour extension (peut être héritée), mais la méthode&apos;getRoles&apos; n&apos;a pas de Javadoc qui explique comment le faire en toute sécurité. Si la classe n&apos;est pas conçue pour extension, envisagez de rendre la classe &apos;User&apos; finale ou de rendre la méthode &apos;getRoles&apos; static/final/abstract/empty, d&apos;ajouter les annotations permises pour la méthode." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="85" column="5" severity="error" message="Commentaire Javadoc manquant." source="com.puppycrawl.tools.checkstyle.checks.javadoc.MissingJavadocMethodCheck"/>
+<error line="85" column="5" severity="error" message="La classe &apos;User&apos; semble être conçue pour extension (peut être héritée), mais la méthode&apos;setRoles&apos; n&apos;a pas de Javadoc qui explique comment le faire en toute sécurité. Si la classe n&apos;est pas conçue pour extension, envisagez de rendre la classe &apos;User&apos; finale ou de rendre la méthode &apos;setRoles&apos; static/final/abstract/empty, d&apos;ajouter les annotations permises pour la méthode." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\repository\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\repository\RoleRepository.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\repository\UserRepository.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\ConsumerService.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\ConsumerServiceImpl.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\ProducerService.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\ProducerServiceImpl.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\SecurityService.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\SecurityServiceImpl.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\UserDetailsServiceImpl.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\UserService.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\service\UserServiceImpl.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\UserNotFoundException.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\utils\ElasticsearchUtil.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\utils\MemcachedUtils.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\utils\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\utils\RabbitMqUtil.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\validator\package-info.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\java\com\visualpathit\account\validator\UserValidator.java">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\resources\application.properties">
+</file>
+<file name="C:\Users\amine\OneDrive\Bureau\Jenkins-CICD-Pipline\src\main\resources\validation.properties">
+</file>
+</checkstyle>
