@@ -1,6 +1,5 @@
 package com.visualpathit.account.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visualpathit.account.beans.Components;
@@ -11,16 +10,15 @@ import com.visualpathit.account.beans.Components;
 @Service
 public final class RabbitMqUtil {
     /** Injected application configuration. */
-    private static Components components;
+    private final Components components;
 
     /**
-     * Sets the injected application configuration.
+     * Creates the utility with injected application configuration.
      *
      * @param configuration application configuration bean
      */
-    @Autowired
-    public void setComponents(final Components configuration) {
-        RabbitMqUtil.components = configuration;
+    public RabbitMqUtil(final Components configuration) {
+        this.components = configuration;
     }
 
     /**
@@ -28,7 +26,7 @@ public final class RabbitMqUtil {
      *
      * @return RabbitMQ host
      */
-    public static String getRabbitMqHost() {
+    public String getRabbitMqHost() {
         return components.getRabbitMqHost();
     }
 
@@ -37,7 +35,7 @@ public final class RabbitMqUtil {
      *
      * @return RabbitMQ port
      */
-    public static String getRabbitMqPort() {
+    public String getRabbitMqPort() {
         return components.getRabbitMqPort();
     }
 
@@ -46,7 +44,7 @@ public final class RabbitMqUtil {
      *
      * @return RabbitMQ username
      */
-    public static String getRabbitMqUser() {
+    public String getRabbitMqUser() {
         return components.getRabbitMqUser();
     }
 
@@ -55,7 +53,7 @@ public final class RabbitMqUtil {
      *
      * @return RabbitMQ password
      */
-    public static String getRabbitMqPassword() {
+    public String getRabbitMqPassword() {
         return components.getRabbitMqPassword();
     }
 }

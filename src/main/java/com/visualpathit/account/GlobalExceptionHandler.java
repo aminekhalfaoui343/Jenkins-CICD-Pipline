@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public final class GlobalExceptionHandler {
+    /** Request attribute used to display an error message. */
+    private static final String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
 
     /**
      * Maps a missing user exception to the application not-found page.
@@ -19,7 +21,7 @@ public final class GlobalExceptionHandler {
     public String handleUserNotFoundException(
             final UserNotFoundException exception,
             final HttpServletRequest request) {
-        request.setAttribute("errorMessage", exception.getMessage());
+        request.setAttribute(ERROR_MESSAGE_ATTRIBUTE, exception.getMessage());
         return "forward:/WEB-INF/views/error/404.jsp";
     }
 
@@ -34,7 +36,8 @@ public final class GlobalExceptionHandler {
     public String handleBadCredentialsException(
             final BadCredentialsException exception,
             final HttpServletRequest request) {
-        request.setAttribute("errorMessage", "Invalid username or password.");
+        request.setAttribute(
+                ERROR_MESSAGE_ATTRIBUTE, "Invalid username or password.");
         return "forward:/WEB-INF/views/error/500.jsp";
     }
 
@@ -50,7 +53,7 @@ public final class GlobalExceptionHandler {
             final Exception exception,
             final HttpServletRequest request) {
         request.setAttribute(
-                "errorMessage",
+                ERROR_MESSAGE_ATTRIBUTE,
                 "An unexpected error occurred. Please try again later.");
         return "forward:/WEB-INF/views/error/500.jsp";
     }

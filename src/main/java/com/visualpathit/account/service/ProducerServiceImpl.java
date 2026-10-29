@@ -23,6 +23,18 @@ public final class ProducerServiceImpl implements ProducerService {
     /** Name of the message exchange. */
     private static final String EXCHANGE_NAME = "messages";
 
+    /** RabbitMQ connection settings. */
+    private final RabbitMqUtil rabbitMqUtil;
+
+    /**
+     * Creates the producer with RabbitMQ connection settings.
+     *
+     * @param settings RabbitMQ connection settings
+     */
+    public ProducerServiceImpl(final RabbitMqUtil settings) {
+        this.rabbitMqUtil = settings;
+    }
+
     /**
      * Publishes a message to the configured fanout exchange.
      *
@@ -35,10 +47,10 @@ public final class ProducerServiceImpl implements ProducerService {
 
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(RabbitMqUtil.getRabbitMqHost());
-            factory.setPort(Integer.parseInt(RabbitMqUtil.getRabbitMqPort()));
-            factory.setUsername(RabbitMqUtil.getRabbitMqUser());
-            factory.setPassword(RabbitMqUtil.getRabbitMqPassword());
+            factory.setHost(rabbitMqUtil.getRabbitMqHost());
+            factory.setPort(Integer.parseInt(rabbitMqUtil.getRabbitMqPort()));
+            factory.setUsername(rabbitMqUtil.getRabbitMqUser());
+            factory.setPassword(rabbitMqUtil.getRabbitMqPassword());
             try (Connection connection = factory.newConnection();
                     Channel channel = connection.createChannel()) {
                 channel.exchangeDeclare(EXCHANGE_NAME, "fanout");

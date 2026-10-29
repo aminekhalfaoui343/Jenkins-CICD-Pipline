@@ -1,7 +1,6 @@
 package com.visualpathit.account.controllerTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
 import com.visualpathit.account.controller.UserController;
-import com.visualpathit.account.model.User;
 import com.visualpathit.account.service.UserService;
 import com.visualpathit.account.setup.StandaloneMvcTestViewResolver;
 
@@ -24,7 +22,9 @@ import com.visualpathit.account.setup.StandaloneMvcTestViewResolver;
 
 
 public class UserControllerTest {
-	
+	/** Login view name returned by the login and root mappings. */
+	private static final String LOGIN_VIEW = "login";
+
 	@Mock
 	private UserService controllerSer;
 	@InjectMocks
@@ -34,18 +34,12 @@ public class UserControllerTest {
 	@Before
 	public void setup(){
 		MockitoAnnotations.initMocks(this);
-		
-		/*InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".jsp");
-		*/
 		mockMvc = MockMvcBuilders.standaloneSetup(controller)
 				  .setViewResolvers(new StandaloneMvcTestViewResolver()).build();
 	}
 	
 	@Test
 	public void registrationTestforHappyFlow() throws Exception{
-		User user = new User();
 		mockMvc.perform(get("/registration"))
         .andExpect(status().isOk())
         .andExpect(view().name("registration"))
@@ -60,28 +54,13 @@ public class UserControllerTest {
         .andExpect(forwardedUrl("registration"));
 		
 	}
-	/*@Test
-	public void registrationTestforPostValueHappyFlow() throws Exception{
-		String description =new String("Error String");
-		UserValidator userValidator;
-		BindingResult bindingResult;
-		when(userValidator.validate(new User(),bindingResult))
-		.thenThrow(bindingResult.hasErrors());
-		mockMvc.perform(post("/registration").contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("userForm","userForm"))
-		
-        .andExpect(status().isOk());
-        //.andExpect(view().name("redirect:/welcome"))
-        //.andExpect(forwardedUrl("redirect:/welcome"));
-		
-	}*/
 	@Test
 	public void loginTestHappyFlow() throws Exception{
 		String error = "Your username and password is invalid";
 		mockMvc.perform(get("/login").param(error, error))
         .andExpect(status().isOk())
-        .andExpect(view().name("login"))
-        .andExpect(forwardedUrl("login"));
+        .andExpect(view().name(LOGIN_VIEW))
+        .andExpect(forwardedUrl(LOGIN_VIEW));
 		
 	}
 	@Test
@@ -96,8 +75,8 @@ public class UserControllerTest {
 	public void welcomeAfterDirectLoginTestHappyFlow() throws Exception{
 		mockMvc.perform(get("/"))
         .andExpect(status().isOk())
-        .andExpect(view().name("login"))
-        .andExpect(forwardedUrl("login"));
+        .andExpect(view().name(LOGIN_VIEW))
+        .andExpect(forwardedUrl(LOGIN_VIEW));
 		
 	}
 	@Test

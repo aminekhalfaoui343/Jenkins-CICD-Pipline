@@ -3,7 +3,6 @@ package com.visualpathit.account.utils;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.visualpathit.account.beans.Components;
@@ -12,16 +11,15 @@ import com.visualpathit.account.beans.Components;
 public final class ElasticsearchUtil {
 
     /** Injected configuration used to create Elasticsearch clients. */
-    private static Components object;
+    private final Components components;
 
     /**
-     * Sets the injected Elasticsearch configuration.
+     * Creates the utility with injected Elasticsearch configuration.
      *
      * @param configuration application configuration bean
      */
-    @Autowired
-    public void setComponents(final Components configuration) {
-        ElasticsearchUtil.object = configuration;
+    public ElasticsearchUtil(final Components configuration) {
+        this.components = configuration;
     }
 
     /**
@@ -31,10 +29,10 @@ public final class ElasticsearchUtil {
      * @return configured Elasticsearch client, or {@code null} if
      *         initialization fails
      */
-    public static RestHighLevelClient getRestHighLevelClient() {
+    public RestHighLevelClient getRestHighLevelClient() {
         System.out.println("Creating Elasticsearch client...");
-        String elasticsearchHost = object.getElasticsearchHost();
-        String elasticsearchPort = object.getElasticsearchPort();
+        String elasticsearchHost = components.getElasticsearchHost();
+        String elasticsearchPort = components.getElasticsearchPort();
 
         System.out.println("Elasticsearch Host: " + elasticsearchHost);
         System.out.println("Elasticsearch Port: " + elasticsearchPort);

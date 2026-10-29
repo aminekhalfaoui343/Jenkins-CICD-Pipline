@@ -37,20 +37,26 @@ public final class UserController {
     /** Registration validator. */
     private final UserValidator userValidator;
 
+    /** Cache utility used to load and store user details. */
+    private final MemcachedUtils memcachedUtils;
+
     /**
      * Creates the user controller.
      *
      * @param userServiceDependency user persistence service
      * @param securityServiceDependency authentication service
      * @param userValidatorDependency registration validator
+     * @param cacheUtils cache utility
      */
     public UserController(
             final UserService userServiceDependency,
             final SecurityService securityServiceDependency,
-            final UserValidator userValidatorDependency) {
+            final UserValidator userValidatorDependency,
+            final MemcachedUtils cacheUtils) {
         this.userService = userServiceDependency;
         this.securityService = securityServiceDependency;
         this.userValidator = userValidatorDependency;
+        this.memcachedUtils = cacheUtils;
     }
 
     /**
@@ -190,7 +196,7 @@ public final class UserController {
             final Model model) {
         String result;
         try {
-            User userData = MemcachedUtils.memcachedGetData(id);
+            User userData = memcachedUtils.memcachedGetData(id);
             if (userData != null) {
                 result = "Data is From Cache";
                 model.addAttribute("user", UserViewDto.fromUser(userData));
@@ -200,9 +206,9 @@ public final class UserController {
                     model.addAttribute(ERROR_ATTRIBUTE, "User not found");
                     return NOT_FOUND_VIEW;
                 }
-                result = MemcachedUtils.memcachedSetData(user, id);
+                result = memcachedUtils.memcachedSetData(user, id);
                 if (result == null) {
-                    result = "Memcached Connection Failure !!";
+                    result = MemcachedUtils.MEMCACHED_CONNECTION_FAILURE;
                 }
                 model.addAttribute("user", UserViewDto.fromUser(user));
             }

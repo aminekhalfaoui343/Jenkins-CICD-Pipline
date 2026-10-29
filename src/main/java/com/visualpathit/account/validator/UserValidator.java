@@ -21,6 +21,10 @@ public final class UserValidator implements Validator {
     private static final int MIN_PASSWORD_LENGTH = 8;
     /** Maximum password size accepted for registration. */
     private static final int MAX_PASSWORD_LENGTH = 32;
+    /** Registration form field that carries the account name. */
+    private static final String USERNAME_FIELD = "username";
+    /** Validation code used when a required field is blank. */
+    private static final String NOT_EMPTY_CONSTRAINT = "NotEmpty";
 
     /** User lookup service used for duplicate-name validation. */
     private final UserService userService;
@@ -58,21 +62,22 @@ public final class UserValidator implements Validator {
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(
-                errors, "username", "NotEmpty");
+                errors, USERNAME_FIELD, NOT_EMPTY_CONSTRAINT);
         if (StringUtils.hasText(user.getUsername())) {
             int usernameLength = user.getUsername().length();
             if (usernameLength < MIN_USERNAME_LENGTH
                     || usernameLength > MAX_USERNAME_LENGTH) {
-                errors.rejectValue("username", "Size.userForm.username");
+                errors.rejectValue(
+                        USERNAME_FIELD, "Size.userForm.username");
             }
             if (userService.findByUsername(user.getUsername()) != null) {
                 errors.rejectValue(
-                        "username", "Duplicate.userForm.username");
+                        USERNAME_FIELD, "Duplicate.userForm.username");
             }
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(
-                errors, "password", "NotEmpty");
+                errors, "password", NOT_EMPTY_CONSTRAINT);
         if (StringUtils.hasText(user.getPassword())) {
             int passwordLength = user.getPassword().length();
             if (passwordLength < MIN_PASSWORD_LENGTH
@@ -82,7 +87,7 @@ public final class UserValidator implements Validator {
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(
-                errors, "passwordConfirm", "NotEmpty");
+                errors, "passwordConfirm", NOT_EMPTY_CONSTRAINT);
         if (user.getPasswordConfirm() != null
                 && !user.getPasswordConfirm().equals(user.getPassword())) {
             errors.rejectValue(

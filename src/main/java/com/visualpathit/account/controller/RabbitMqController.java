@@ -13,6 +13,17 @@ import java.util.concurrent.TimeoutException;
 
 @Controller
 public final class RabbitMqController {
+    /** RabbitMQ connection settings. */
+    private final RabbitMqUtil rabbitMqUtil;
+
+    /**
+     * Creates the controller with RabbitMQ connection settings.
+     *
+     * @param settings RabbitMQ connection settings
+     */
+    public RabbitMqController(final RabbitMqUtil settings) {
+        this.rabbitMqUtil = settings;
+    }
 
     /**
      * Checks whether a RabbitMQ connection can be opened.
@@ -24,10 +35,10 @@ public final class RabbitMqController {
         ModelAndView modelAndView = new ModelAndView();
         ConnectionFactory factory = new ConnectionFactory();
         try {
-            factory.setHost(RabbitMqUtil.getRabbitMqHost());
-            factory.setPort(Integer.parseInt(RabbitMqUtil.getRabbitMqPort()));
-            factory.setUsername(RabbitMqUtil.getRabbitMqUser());
-            factory.setPassword(RabbitMqUtil.getRabbitMqPassword());
+            factory.setHost(rabbitMqUtil.getRabbitMqHost());
+            factory.setPort(Integer.parseInt(rabbitMqUtil.getRabbitMqPort()));
+            factory.setUsername(rabbitMqUtil.getRabbitMqUser());
+            factory.setPassword(rabbitMqUtil.getRabbitMqPassword());
             try (Connection connection = factory.newConnection()) {
                 if (connection.isOpen()) {
                     modelAndView.setViewName("rabbitmq");

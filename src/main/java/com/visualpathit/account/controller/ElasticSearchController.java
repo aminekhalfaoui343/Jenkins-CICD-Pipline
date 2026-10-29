@@ -40,13 +40,20 @@ public final class ElasticSearchController {
     /** User persistence service used to load indexed records. */
     private final UserService userService;
 
+    /** Elasticsearch client factory. */
+    private final ElasticsearchUtil elasticsearchUtil;
+
     /**
      * Creates the Elasticsearch controller.
      *
      * @param service user persistence service
+     * @param clientFactory Elasticsearch client factory
      */
-    public ElasticSearchController(final UserService service) {
+    public ElasticSearchController(
+            final UserService service,
+            final ElasticsearchUtil clientFactory) {
         this.userService = service;
+        this.elasticsearchUtil = clientFactory;
     }
 
     /**
@@ -61,7 +68,7 @@ public final class ElasticSearchController {
         List<User> users = userService.getList();
 
         try (RestHighLevelClient client =
-                     ElasticsearchUtil.getRestHighLevelClient()) {
+                     elasticsearchUtil.getRestHighLevelClient()) {
             for (User user : users) {
                 IndexRequest indexRequest = new IndexRequest(USERS_INDEX)
                         .id(String.valueOf(user.getId()))
@@ -100,7 +107,7 @@ public final class ElasticSearchController {
             @PathVariable final String id,
             final Model model) throws IOException {
         try (RestHighLevelClient client =
-                     ElasticsearchUtil.getRestHighLevelClient()) {
+                     elasticsearchUtil.getRestHighLevelClient()) {
             GetRequest getRequest = new GetRequest(USERS_INDEX, id);
             GetResponse getResponse = client.get(
                     getRequest, RequestOptions.DEFAULT);
@@ -126,7 +133,7 @@ public final class ElasticSearchController {
             @PathVariable final String id,
             final Model model) throws IOException {
         try (RestHighLevelClient client =
-                     ElasticsearchUtil.getRestHighLevelClient()) {
+                     elasticsearchUtil.getRestHighLevelClient()) {
             UpdateRequest updateRequest = new UpdateRequest(USERS_INDEX, id)
                     .doc(XContentFactory.jsonBuilder()
                             .startObject()
@@ -156,7 +163,7 @@ public final class ElasticSearchController {
             @PathVariable final String id,
             final Model model) throws IOException {
         try (RestHighLevelClient client =
-                     ElasticsearchUtil.getRestHighLevelClient()) {
+                     elasticsearchUtil.getRestHighLevelClient()) {
             DeleteRequest deleteRequest = new DeleteRequest(USERS_INDEX, id);
             DeleteResponse deleteResponse = client.delete(
                     deleteRequest, RequestOptions.DEFAULT);

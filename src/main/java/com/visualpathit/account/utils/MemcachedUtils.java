@@ -8,7 +8,6 @@ import java.util.concurrent.Future;
 import net.spy.memcached.MemcachedClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -21,21 +20,23 @@ public final class MemcachedUtils {
     private static final int CACHE_EXPIRATION_SECONDS = 900;
     /** Memcached stat key used to identify a healthy server. */
     private static final String SERVER_ID_STAT = "pid";
+    /** Status returned when a cache connection or write fails. */
+    public static final String MEMCACHED_CONNECTION_FAILURE =
+            "Memcached Connection Failure !!";
     /** Logger for cache availability and operation errors. */
     private static final Logger LOGGER =
             LoggerFactory.getLogger(MemcachedUtils.class);
 
     /** Application configuration for cache endpoints. */
-    private static Components object;
+    private final Components components;
 
     /**
-     * Sets the injected application configuration.
+     * Creates the cache utility with injected application configuration.
      *
      * @param configuration configuration containing cache endpoints
      */
-    @Autowired
-    public void setComponents(final Components configuration) {
-        MemcachedUtils.object = configuration;
+    public MemcachedUtils(final Components configuration) {
+        this.components = configuration;
     }
 
     /**
@@ -45,26 +46,30 @@ public final class MemcachedUtils {
      * @param key cache key
      * @return existing cache operation status message
      */
-    public static String memcachedSetData(
+    public String memcachedSetData(
             final User user, final String key) {
         if (user == null || !StringUtils.hasText(key)) {
-            return "Memcached Connection Failure !!";
+            return MEMCACHED_CONNECTION_FAILURE;
         }
 
         MemcachedClient client = null;
         try {
             client = memcachedConnection();
             if (client == null) {
-                return "Memcached Connection Failure !!";
+                return MEMCACHED_CONNECTION_FAILURE;
             }
             Future<Boolean> result = client.set(
                     key, CACHE_EXPIRATION_SECONDS, user);
             return Boolean.TRUE.equals(result.get())
                     ? " Data is From DB and Data Inserted In Cache !!"
-                    : "Memcached Connection Failure !!";
+                    : MEMCACHED_CONNECTION_FAILURE;
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Unable to store user data in Memcached", exception);
+            return MEMCACHED_CONNECTION_FAILURE;
         } catch (Exception exception) {
             LOGGER.warn("Unable to store user data in Memcached", exception);
-            return "Memcached Connection Failure !!";
+            return MEMCACHED_CONNECTION_FAILURE;
         } finally {
             shutdown(client);
         }
@@ -76,7 +81,7 @@ public final class MemcachedUtils {
      * @param key cache key
      * @return cached user or {@code null} if unavailable
      */
-    public static User memcachedGetData(final String key) {
+    public User memcachedGetData(final String key) {
         if (!StringUtils.hasText(key)) {
             return null;
         }
@@ -104,18 +109,14 @@ public final class MemcachedUtils {
      * @return connected cache client, or {@code null} if neither server is
      *         available
      */
-    public static MemcachedClient memcachedConnection() {
-        if (object == null) {
-            LOGGER.warn("Memcached configuration is not initialized");
-            return null;
-        }
-
+    public MemcachedClient memcachedConnection() {
         MemcachedClient activeClient = connect(
-                object.getActiveHost(), object.getActivePort());
+                components.getActiveHost(), components.getActivePort());
         return activeClient != null
                 ? activeClient
                 : connect(
-                        object.getStandByHost(), object.getStandByPort());
+                        components.getStandByHost(),
+                        components.getStandByPort());
     }
 
     /**
@@ -123,16 +124,12 @@ public final class MemcachedUtils {
      *
      * @return standby cache client, or {@code null} if unavailable
      */
-    public static MemcachedClient standByMemcachedConn() {
-        if (object == null) {
-            LOGGER.warn("Memcached configuration is not initialized");
-            return null;
-        }
+    public MemcachedClient standByMemcachedConn() {
         return connect(
-                object.getStandByHost(), object.getStandByPort());
+                components.getStandByHost(), components.getStandByPort());
     }
 
-    private static MemcachedClient connect(
+    private MemcachedClient connect(
             final String host, final String port) {
         if (!StringUtils.hasText(host) || !StringUtils.hasText(port)) {
             return null;
@@ -157,7 +154,7 @@ public final class MemcachedUtils {
         return null;
     }
 
-    private static boolean hasServerId(
+    private boolean hasServerId(
             final Map<SocketAddress, Map<String, String>> stats) {
         if (stats == null) {
             return false;
@@ -172,7 +169,7 @@ public final class MemcachedUtils {
         return false;
     }
 
-    private static void shutdown(final MemcachedClient client) {
+    private void shutdown(final MemcachedClient client) {
         if (client != null) {
             try {
                 client.shutdown();
